@@ -154,6 +154,134 @@ router.get('/', jwtAuthentication, async (req, res) => {
     }
 });
 
+router.get('/feed', jwtAuthentication, async (req, res) => {
+    console.log("FEED API HIT");
+    let conn;
+
+    try {
+
+        const userId = req.user.userId;
+        console.log("FEED API HIT");
+        // 1. pagination
+        const page = parseInt(req.query.page) || 1;
+        const size = parseInt(req.query.size) || 10;
+        const offset = (page - 1) * size;
+
+        conn = await db.getConnection();
+        console.log("DB CONNECT OK");
+        // 2. 게시글 + 좋아요 + 댓글 + isLiked
+        const result = await conn.execute(
+            `
+            SELECT
+                P.POST_ID,
+                P.TITLE,
+                P.USER_ID,
+                P.CREATED_AT,
+
+                -- 좋아요 수
+                (SELECT COUNT(*)
+                 FROM POST_LIKES L
+                 WHERE L.POST_ID = P.POST_ID) AS LIKE_COUNT,
+
+                -- 댓글 수
+                (SELECT COUNT(*)
+                 FROM COMMENTS C
+                 WHERE C.POST_ID = P.POST_ID) AS COMMENT_COUNT,
+
+                -- 내가 좋아요 눌렀는지
+                (SELECT COUNT(*)
+                 FROM POST_LIKES L2
+                 WHERE L2.POST_ID = P.POST_ID
+                 AND L2.USER_ID = :userId) AS IS_LIKED
+
+            FROM POSTS P
+            ORDER BY P.CREATED_AT DESC
+            OFFSET :offsetVal ROWS
+            FETCH NEXT :sizeVal ROWS ONLY
+            `,
+            {
+                userId,
+                offsetVal: offset,
+                sizeVal: size
+            },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        const posts = result.rows;
+
+        // 3. 전체 개수
+        const totalResult = await conn.execute(
+            `
+            SELECT COUNT(*) AS TOTAL
+            FROM POSTS
+            `,
+            {},
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        const total = totalResult.rows[0].TOTAL;
+
+        // 4. 태그 전체 조회 (N+1 방지)
+        const tagResult = await conn.execute(
+            `
+            SELECT 
+                PT.POST_ID,
+                T.TAG_NAME
+            FROM POST_TAGS PT
+            JOIN TAGS T ON PT.TAG_ID = T.TAG_ID
+            `,
+            {},
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        // 5. tag mapping
+        const tagMap = {};
+
+        tagResult.rows.forEach(row => {
+            if (!tagMap[row.POST_ID]) {
+                tagMap[row.POST_ID] = [];
+            }
+            tagMap[row.POST_ID].push(row.TAG_NAME);
+        });
+
+        // 6. 최종 feed 조립
+        const feed = posts.map(post => ({
+            ...post,
+            IS_LIKED: post.IS_LIKED > 0,
+            TAGS: tagMap[post.POST_ID] || []
+        }));
+        console.log(posts[0])
+        // 7. response
+        res.json({
+            result: "success",
+            data: {
+                list: feed,
+                pagination: {
+                    page,
+                    size,
+                    total,
+                    totalPages: Math.ceil(total / size)
+                }
+            }
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            result: "fail",
+            message: "feed 조회 실패"
+        });
+
+    } finally {
+
+        if (conn) await conn.close();
+
+    }
+
+});
+
 router.get('/:postId', async (req, res) => {
     console.log("🔥 POST DETAIL ROUTE HIT");   // ← 여기
 
@@ -686,133 +814,6 @@ router.get('/search', async (req, res) => {
 
     } finally {
         if (conn) await conn.close();
-    }
-
-});
-
-router.get('/feed', jwtAuthentication, async (req, res) => {
-    console.log("FEED API HIT");
-    let conn;
-
-    try {
-
-        const userId = req.user.userId;
-        console.log("FEED API HIT");
-        // 1. pagination
-        const page = parseInt(req.query.page) || 1;
-        const size = parseInt(req.query.size) || 10;
-        const offset = (page - 1) * size;
-
-        conn = await db.getConnection();
-        console.log("DB CONNECT OK");
-        // 2. 게시글 + 좋아요 + 댓글 + isLiked
-        const result = await conn.execute(
-            `
-            SELECT 
-                P.POST_ID,
-                P.TITLE,
-                P.USER_ID,
-                P.CREATED_AT,
-
-                -- 좋아요 수
-                (SELECT COUNT(*) 
-                 FROM POST_LIKES L 
-                 WHERE L.POST_ID = P.POST_ID) AS LIKE_COUNT,
-
-                -- 댓글 수
-                (SELECT COUNT(*) 
-                 FROM COMMENTS C 
-                 WHERE C.POST_ID = P.POST_ID) AS COMMENT_COUNT,
-
-                -- 내가 좋아요 눌렀는지
-                (SELECT COUNT(*) 
-                 FROM POST_LIKES L2 
-                 WHERE L2.POST_ID = P.POST_ID
-                 AND L2.USER_ID = :userId) AS IS_LIKED
-
-            FROM POSTS P
-            ORDER BY P.CREATED_AT DESC
-            OFFSET :offset ROWS FETCH NEXT :size ROWS ONLY
-            `,
-            {
-                userId,
-                offset,
-                size
-            },
-            { outFormat: oracledb.OUT_FORMAT_OBJECT }
-        );
-        
-        const posts = result.rows;
-
-        // 3. 전체 개수
-        const totalResult = await conn.execute(
-            `
-            SELECT COUNT(*) AS TOTAL
-            FROM POSTS
-            `,
-            {},
-            { outFormat: oracledb.OUT_FORMAT_OBJECT }
-        );
-
-        const total = totalResult.rows[0].TOTAL;
-
-        // 4. 태그 전체 조회 (N+1 방지)
-        const tagResult = await conn.execute(
-            `
-            SELECT 
-                PT.POST_ID,
-                T.TAG_NAME
-            FROM POST_TAGS PT
-            JOIN TAGS T ON PT.TAG_ID = T.TAG_ID
-            `,
-            {},
-            { outFormat: oracledb.OUT_FORMAT_OBJECT }
-        );
-
-        // 5. tag mapping
-        const tagMap = {};
-
-        tagResult.rows.forEach(row => {
-            if (!tagMap[row.POST_ID]) {
-                tagMap[row.POST_ID] = [];
-            }
-            tagMap[row.POST_ID].push(row.TAG_NAME);
-        });
-
-        // 6. 최종 feed 조립
-        const feed = posts.map(post => ({
-            ...post,
-            IS_LIKED: post.IS_LIKED > 0,
-            TAGS: tagMap[post.POST_ID] || []
-        }));
-        console.log(posts[0])
-        // 7. response
-        res.json({
-            result: "success",
-            data: {
-                list: feed,
-                pagination: {
-                    page,
-                    size,
-                    total,
-                    totalPages: Math.ceil(total / size)
-                }
-            }
-        });
-
-    } catch (err) {
-
-        console.error(err);
-
-        res.status(500).json({
-            result: "fail",
-            message: "feed 조회 실패"
-        });
-
-    } finally {
-
-        if (conn) await conn.close();
-
     }
 
 });
