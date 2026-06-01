@@ -3,6 +3,9 @@ const oracledb = require('oracledb');
 const db = require("../db");
 const router = express.Router();
 
+const auth = require("../auth");
+
+
 router.get('/', async (req, res) => {
   const { } = req.query;
   let connection;
@@ -29,4 +32,15 @@ router.get('/', async (req, res) => {
   }
 });
 
+
+router.get("/test", auth, (req, res) => {
+
+    console.log(req.user);
+
+    res.json({
+        result: true,
+        user: req.user
+    });
+
+});
 module.exports = router;
