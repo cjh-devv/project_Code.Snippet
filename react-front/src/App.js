@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Sub from './components/Sub';
 import Menu from './components/Menu'; 
 import Feed from './pages/Feed';
+import Join from './pages/Join';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/sub" element={<Sub />} />
           <Route path="/feed" element={<Feed />} />
+          <Route path="/join" element={<Join />} />
         </Routes>
       </Box>
     </Box>

@@ -200,6 +200,12 @@ export default function PostCard({ feed, refreshFeed }) {
 
     };
 
+    // 댓 수정 취소
+    const handleEditCommentCancel = () => {
+        setEditingCommentId(null);
+        setEditContent("");
+    };
+
     return (
         <>
             {/* 카드 */}
@@ -225,30 +231,30 @@ export default function PostCard({ feed, refreshFeed }) {
                 open={open}
                 onClose={handleClose}
                 fullWidth
-                maxWidth="lg"
+                maxWidth="md"
             >
 
-                <DialogTitle>
+                <DialogTitle sx={{ fontWeight: "bold" }}>
                     {selectedFeed?.TITLE}
 
                     <IconButton
                         onClick={handleClose}
-                        sx={{ position: 'absolute', right: 8, top: 8 }}
+                        sx={{ position: 'absolute', right: 10, top: 10 }}
                     >
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
 
-                <DialogContent sx={{ display: 'flex' }}>
+                <DialogContent>
 
                     {/* 왼쪽 */}
-                    <Box sx={{ flex: 1, p: 2 }}>
+                    <Box sx={{ p: 2 }}>
 
-                        <Typography variant="h5">
+                        <Typography variant="h6" fontWeight="bold">
                             {selectedFeed?.TITLE}
                         </Typography>
 
-                        <Typography sx={{ mt: 2 }}>
+                        <Typography sx={{ mt: 2, whiteSpace: "pre-line" }}>
                             {selectedFeed?.CONTENT}
                         </Typography>
 
@@ -257,9 +263,11 @@ export default function PostCard({ feed, refreshFeed }) {
                                 sx={{
                                     mt: 2,
                                     p: 2,
-                                    bgcolor: "#f5f5f5",
+                                    bgcolor: "#f6f8fa",
                                     borderRadius: 2,
-                                    fontFamily: "monospace"
+                                    fontFamily: "monospace",
+                                    fontSize: 13,
+                                    overflowX: "auto"
                                 }}
                             >
                                 {selectedFeed.CODE_BLOCK}
@@ -270,7 +278,16 @@ export default function PostCard({ feed, refreshFeed }) {
 
                     {/* 오른쪽 댓글 */}
 
-                    <Box sx={{ width: 300, borderLeft: "1px solid #ddd", pl: 2, }}>
+                    <Box sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        px: 2,
+                        py: 1,
+                        borderTop: "1px solid #eee",
+                        borderBottom: "1px solid #eee",
+                        mt: 2
+                    }}>
 
                         <Typography variant="h6">
                             ❤️ {selectedFeed?.LIKE_COUNT}
@@ -278,100 +295,117 @@ export default function PostCard({ feed, refreshFeed }) {
 
                         <Button
                             variant="contained"
-                            sx={{ mt: 1, mb: 2 }}
+                            size="small"
                             onClick={handleLike}
                         >
                             {selectedFeed?.IS_LIKED
                                 ? "취소"
                                 : "좋아요"}
                         </Button>
+                    </Box>
+                    <Box sx={{ p: 2 }}>
 
-                        <Typography variant="h6">댓글</Typography>
+                        <Typography variant="h6" sx={{ mb: 2 }}>
+                            댓글
+                        </Typography>
 
                         <List>
-                            {comments.map((c, i) => (
-                                <ListItem key={i} alignItems="flex-start" sx={{
-                                    display: "block",
-                                    borderBottom: "1px solid #eee",
-                                    py: 1
-                                }}>
-                                    <ListItemAvatar>
-                                        <Box
-                                            sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: 1
-                                            }}
-                                        >
-                                            <Avatar>
-                                                {c.USER_ID?.charAt(0).toUpperCase()}  {/* 아이디의 첫 글자를 아바타로 표시 */}
-                                            </Avatar>
-                                            <Typography fontWeight="bold">
-                                                {c.USER_ID}
-                                            </Typography>
-                                        </Box>
-                                    </ListItemAvatar>
+                            {comments.map((c) => (
+                                <ListItem
+                                    key={c.COMMENT_ID}
+                                    alignItems="flex-start"
+                                    sx={{
+                                        display: "block",
+                                        borderBottom: "1px solid #f0f0f0",
+                                        py: 1
+                                    }}
+                                >
+
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                        <Avatar sx={{ width: 28, height: 28 }}>
+                                            {c.USER_ID?.charAt(0).toUpperCase()}
+                                        </Avatar>
+
+                                        <Typography fontWeight="bold" fontSize={13}>
+                                            {c.USER_ID}
+                                        </Typography>
+                                    </Box>
+
                                     {editingCommentId === c.COMMENT_ID ? (
+
                                         <>
                                             <TextField
-                                                size="small"
                                                 fullWidth
+                                                size="small"
                                                 value={editContent}
-                                                onChange={(e) =>
-                                                    setEditContent(e.target.value)
-                                                }
+                                                onChange={(e) => setEditContent(e.target.value)}
+                                                sx={{ mt: 1 }}
                                             />
 
-                                            <Button
-                                                onClick={() =>
-                                                    handleEditCommentSave(c.COMMENT_ID)
-                                                }
-                                            >
-                                                저장
-                                            </Button>
-                                        </>
-                                    ) : (
-                                        <Typography>
-                                            {c.CONTENT}
-                                        </Typography>
-                                    )}
+                                            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                                                <Button size="small" variant="contained"
+                                                    onClick={() => handleEditCommentSave(c.COMMENT_ID)}
+                                                >
+                                                    저장
+                                                </Button>
 
-                                    {decoded.userId === c.USER_ID && (
-                                        <Box sx={{
-                                            display: "flex",
-                                            justifyContent: "flex-end",
-                                            gap: 1,
-                                            mt: 1
-                                        }}>
-                                            <Button
-                                                color="info"
-                                                onClick={() => handleEditCommentStart(c)}
-                                                size="small"
-                                            >수정
-                                            </Button>
-                                            <Button
-                                                size="small"
-                                                color="error"
-                                                onClick={() => handleDeleteComment(c.COMMENT_ID)}
-                                            >삭제
-                                            </Button>
-                                        </Box>)}
+                                                <Button size="small"
+                                                    onClick={handleEditCommentCancel}
+                                                >
+                                                    취소
+                                                </Button>
+                                            </Box>
+                                        </>
+
+                                    ) : (
+
+                                        <>
+                                            <Typography sx={{ mt: 1, fontSize: 14 }}>
+                                                {c.CONTENT}
+                                            </Typography>
+
+                                            {decoded.userId === c.USER_ID && (
+                                                <Box
+                                                    sx={{
+                                                        display: "flex",
+                                                        justifyContent: "flex-end",
+                                                        gap: 1,
+                                                        mt: 1
+                                                    }}
+                                                >
+                                                    <Button size="small" onClick={() => handleEditCommentStart(c)}>수정</Button>
+                                                    <Button
+                                                        size="small"
+                                                        color="error"
+                                                        onClick={() => handleDeleteComment(c.COMMENT_ID)}
+                                                    >
+                                                        삭제
+                                                    </Button>
+                                                </Box>
+                                            )}
+                                        </>
+                                    )}
                                 </ListItem>
                             ))}
                         </List>
 
-                        <TextField
-                            fullWidth
-                            value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
-                        />
+                        <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                placeholder="댓글을 입력하세요"
+                            />
 
-                        <Button onClick={handleAddComment}>
-                            댓글 추가
-                        </Button>
-
+                            <Button
+                                variant="contained"
+                                onClick={handleAddComment}
+                            >
+                                등록
+                            </Button>
+                        </Box>
                     </Box>
-
                 </DialogContent>
 
                 <DialogActions>

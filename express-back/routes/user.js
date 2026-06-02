@@ -17,10 +17,46 @@ router.post("/join", async (req, res) => {
     try {
 
         const { userId, email, pwd, nickname } = req.body;
+        console.log(userId);
+        console.log(email);
+        console.log(pwd);
+        console.log(nickname);
+
+
+        if (!userId || !nickname || !email || !pwd) {
+            return res.status(400).json({
+                result: "fail",
+                message: "필수값 누락"
+            });
+        }
 
         conn = await db.getConnection();
 
         const hashPwd = await bcrypt.hash(pwd, saltRounds);
+
+        const userCheck = await conn.execute(
+            `SELECT USER_ID FROM USERS WHERE USER_ID = :userId`,
+            { userId }
+        );
+
+        if (userCheck.rows.length > 0) {
+            return res.status(400).json({
+                result: false,
+                message: "이미 존재하는 아이디입니다."
+            });
+        }
+
+        const emailCheck = await conn.execute(
+            `SELECT EMAIL FROM USERS WHERE EMAIL = :email`,
+            { email }
+        );
+
+        if (emailCheck.rows.length > 0) {
+            return res.status(400).json({
+                result: false,
+                message: "이미 가입된 이메일입니다."
+            });
+        }
 
         const result = await conn.execute(
             `

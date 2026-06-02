@@ -84,6 +84,11 @@ function Login() {
           onChange={(e) => setPwd(e.target.value)}
           margin="normal"
           fullWidth
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleLogin();
+            }
+          }}
         />
 
         <Button
