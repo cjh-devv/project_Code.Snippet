@@ -5,28 +5,27 @@ const router = express.Router();
 const jwtAuthentication = require('../auth')
 
 router.post('/', jwtAuthentication, async (req, res) => {
-    router.post('/', jwtAuthentication, async (req, res) => {
 
-        const { title, content, codeBlock, tags = [] } = req.body;
+    const { title, content, codeBlock, tags = [] } = req.body;
 
-        if (!title?.trim() || !content?.trim()) {
-            return res.status(400).json({
-                result: "fail",
-                message: "제목과 내용을 입력하세요."
-            });
-        }
+    if (!title?.trim() || !content?.trim()) {
+        return res.status(400).json({
+            result: "fail",
+            message: "제목과 내용을 입력하세요."
+        });
+    }
 
-        let conn;
+    let conn;
 
-        try {
+    try {
 
-            const userId = req.user.userId;
+        const userId = req.user.userId;
 
-            conn = await db.getConnection();
+        conn = await db.getConnection();
 
-            // 1. 게시글 INSERT + POST_ID 받기
-            const postResult = await conn.execute(
-                `
+        // 1. 게시글 INSERT + POST_ID 받기
+        const postResult = await conn.execute(
+            `
             INSERT INTO POSTS (
                 POST_ID,
                 TITLE,
@@ -45,84 +44,82 @@ router.post('/', jwtAuthentication, async (req, res) => {
             )
             RETURNING POST_ID INTO :postId
             `,
-                {
-                    userId,
-                    title,
-                    content,
-                    codeBlock,
-                    postId: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
-                },
-                { autoCommit: false }
+            {
+                userId,
+                title,
+                content,
+                codeBlock,
+                postId: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+            },
+            { autoCommit: false }
+        );
+
+        const postId = postResult.outBinds.postId[0];
+
+        // 2. 태그 처리
+        for (let tag of tags) {
+
+            const result = await conn.execute(
+                `SELECT TAG_ID FROM TAGS WHERE TAG_NAME = :tag`,
+                { tag },
+                { outFormat: oracledb.OUT_FORMAT_OBJECT }
             );
 
-            const postId = postResult.outBinds.postId[0];
+            let tagId;
 
-            // 2. 태그 처리
-            for (let tag of tags) {
-
-                const result = await conn.execute(
-                    `SELECT TAG_ID FROM TAGS WHERE TAG_NAME = :tag`,
-                    { tag },
-                    { outFormat: oracledb.OUT_FORMAT_OBJECT }
-                );
-
-                let tagId;
-
-                if (result.rows.length === 0) {
-                    const insert = await conn.execute(
-                        `
+            if (result.rows.length === 0) {
+                const insert = await conn.execute(
+                    `
                     INSERT INTO TAGS (TAG_ID, TAG_NAME)
                     VALUES (SEQ_TAGS.NEXTVAL, :tag)
                     RETURNING TAG_ID INTO :id
                     `,
-                        {
-                            tag,
-                            id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
-                        }
-                    );
+                    {
+                        tag,
+                        id: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
+                    }
+                );
 
-                    tagId = insert.outBinds.id[0];
+                tagId = insert.outBinds.id[0];
 
-                } else {
-                    tagId = result.rows[0].TAG_ID;
-                }
+            } else {
+                tagId = result.rows[0].TAG_ID;
+            }
 
-                await conn.execute(
-                    `
+            await conn.execute(
+                `
                 INSERT INTO POST_TAGS (POST_ID, TAG_ID)
                 VALUES (:postId, :tagId)
                 `,
-                    { postId, tagId }
-                );
-            }
-
-            // 3. commit
-            await conn.commit();
-
-            res.json({
-                result: "success",
-                message: "게시글 + 태그 저장 완료",
-                postId
-            });
-
-        } catch (error) {
-
-            console.error(error);
-
-            if (conn) {
-                await conn.rollback();
-            }
-
-            res.status(500).json({
-                result: "fail",
-                message: "서버 오류"
-            });
-
-        } finally {
-            if (conn) await conn.close();
+                { postId, tagId }
+            );
         }
 
-    });
+        // 3. commit
+        await conn.commit();
+
+        res.json({
+            result: "success",
+            message: "게시글 + 태그 저장 완료",
+            postId
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        if (conn) {
+            await conn.rollback();
+        }
+
+        res.status(500).json({
+            result: "fail",
+            message: "서버 오류"
+        });
+
+    } finally {
+        if (conn) await conn.close();
+    }
 });
 
 //내가 쓴 글 만 조회
@@ -174,9 +171,12 @@ router.get('/feed', jwtAuthentication, async (req, res) => {
             `
             SELECT
                 P.POST_ID,
-                P.TITLE,
                 P.USER_ID,
+                P.TITLE,
+                P.CONTENT,
+                P.CODE_BLOCK,
                 P.CREATED_AT,
+                P.UPDATED_AT,
 
                 -- 좋아요 수
                 (SELECT COUNT(*)
@@ -289,7 +289,7 @@ router.get('/:postId', async (req, res) => {
 
     console.log("postId type:", typeof req.params.postId);
     console.log("postId value:", req.params.postId);
-    const { postId } = req.params.postId;
+    const { postId } = req.params;
     if (isNaN(postId)) {
         return res.status(400).json({
             result: "fail",
@@ -327,9 +327,9 @@ router.get('/:postId', async (req, res) => {
     }
 });
 
-//글 댓글 합쳐서
-router.get('/:postId/detail', async (req, res) => {
-
+//글 댓글 태그조회 좋아요눌렀는지
+router.get('/:postId/detail', jwtAuthentication, async (req, res) => {
+    const userId = req.user.userId;
     const { postId } = req.params;
 
     let conn;

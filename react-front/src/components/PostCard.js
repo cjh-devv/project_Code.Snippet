@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 
 import CloseIcon from '@mui/icons-material/Close';
+import { jwtDecode } from 'jwt-decode';
 
 export default function PostCard({ feed, refreshFeed }) {
 
@@ -27,7 +28,11 @@ export default function PostCard({ feed, refreshFeed }) {
     const [selectedFeed, setSelectedFeed] = useState(null);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editContent, setEditContent] = useState("");
 
+    const token = localStorage.getItem("token");
+    const decoded = jwtDecode(token);
 
     const loadComments = () => {
 
@@ -69,7 +74,7 @@ export default function PostCard({ feed, refreshFeed }) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": localStorage.getItem("token")
+                "Authorization": "Bearer " + localStorage.getItem("token")
             },
             body: JSON.stringify({
                 postId: feed.POST_ID,
@@ -89,12 +94,12 @@ export default function PostCard({ feed, refreshFeed }) {
 
     };
 
-    // 삭제
+    // 게시글 삭제
     const handleDelete = () => {
 
-        if (!window.confirm("진짜 삭제?")) return;
+        if (!window.confirm("정말 이 게시글을 삭제하시겠습니까?")) return;
 
-        fetch("http://localhost:3010/feed/" + feed.POST_ID, {
+        fetch("http://localhost:3010/post/" + feed.POST_ID, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -109,6 +114,90 @@ export default function PostCard({ feed, refreshFeed }) {
             .catch(err => {
                 alert("서버 에러 발생!");
             });
+    };
+
+    //좋아요 토글
+    const handleLike = () => {
+
+        fetch(
+            `http://localhost:3010/post/${feed.POST_ID}/like/toggle`,
+            {
+                method: "POST",
+                headers: {
+                    "Authorization":
+                        "Bearer " + localStorage.getItem("token")
+                }
+            }
+        )
+            .then(res => res.json())
+            .then(data => {
+
+                refreshFeed();
+
+                setSelectedFeed(prev => ({
+                    ...prev,
+                    IS_LIKED: !prev.IS_LIKED,
+                    LIKE_COUNT:
+                        prev.LIKE_COUNT +
+                        (prev.IS_LIKED ? -1 : 1)
+                }));
+
+            });
+
+    };
+
+    // 댓삭
+    const handleDeleteComment = (commentId) => {
+        if (window.confirm("정말 삭제하시겠습니까?")) {
+            fetch(
+                `http://localhost:3010/comment/${commentId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization":
+                            "Bearer " + localStorage.getItem("token")
+                    }
+                }
+            )
+                .then(res => res.json())
+                .then(data => {
+                    loadComments();
+                });
+        };
+    };
+
+    //댓 수정
+    const handleEditCommentStart = (c) => {
+        setEditingCommentId(c.COMMENT_ID);
+        setEditContent(c.CONTENT);
+    }
+    //댓 수정저장
+    const handleEditCommentSave = (commentId) => {
+
+        fetch(
+            `http://localhost:3010/comment/${commentId}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization":
+                        "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify({
+                    content: editContent
+                })
+            }
+        )
+            .then(res => res.json())
+            .then(data => {
+
+                loadComments();
+
+                setEditingCommentId(null);
+                setEditContent("");
+
+            });
+
     };
 
     return (
@@ -140,7 +229,7 @@ export default function PostCard({ feed, refreshFeed }) {
             >
 
                 <DialogTitle>
-                    {selectedFeed?.CONTENT}
+                    {selectedFeed?.TITLE}
 
                     <IconButton
                         onClick={handleClose}
@@ -153,24 +242,120 @@ export default function PostCard({ feed, refreshFeed }) {
                 <DialogContent sx={{ display: 'flex' }}>
 
                     {/* 왼쪽 */}
-                    <Box sx={{ flex: 1 }}>
-                        <Typography>{selectedFeed?.CONTENT}</Typography>
+                    <Box sx={{ flex: 1, p: 2 }}>
+
+                        <Typography variant="h5">
+                            {selectedFeed?.TITLE}
+                        </Typography>
+
+                        <Typography sx={{ mt: 2 }}>
+                            {selectedFeed?.CONTENT}
+                        </Typography>
+
+                        {selectedFeed?.CODE_BLOCK && (
+                            <Box
+                                sx={{
+                                    mt: 2,
+                                    p: 2,
+                                    bgcolor: "#f5f5f5",
+                                    borderRadius: 2,
+                                    fontFamily: "monospace"
+                                }}
+                            >
+                                {selectedFeed.CODE_BLOCK}
+                            </Box>
+                        )}
+
                     </Box>
 
                     {/* 오른쪽 댓글 */}
-                    <Box sx={{ width: 300, ml: 2 }}>
+
+                    <Box sx={{ width: 300, borderLeft: "1px solid #ddd", pl: 2, }}>
+
+                        <Typography variant="h6">
+                            ❤️ {selectedFeed?.LIKE_COUNT}
+                        </Typography>
+
+                        <Button
+                            variant="contained"
+                            sx={{ mt: 1, mb: 2 }}
+                            onClick={handleLike}
+                        >
+                            {selectedFeed?.IS_LIKED
+                                ? "취소"
+                                : "좋아요"}
+                        </Button>
 
                         <Typography variant="h6">댓글</Typography>
 
                         <List>
                             {comments.map((c, i) => (
-                                <ListItem key={i}>
+                                <ListItem key={i} alignItems="flex-start" sx={{
+                                    display: "block",
+                                    borderBottom: "1px solid #eee",
+                                    py: 1
+                                }}>
                                     <ListItemAvatar>
-                                        <Avatar>
-                                            {c.id.charAt(0).toUpperCase()}
-                                        </Avatar>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 1
+                                            }}
+                                        >
+                                            <Avatar>
+                                                {c.USER_ID?.charAt(0).toUpperCase()}  {/* 아이디의 첫 글자를 아바타로 표시 */}
+                                            </Avatar>
+                                            <Typography fontWeight="bold">
+                                                {c.USER_ID}
+                                            </Typography>
+                                        </Box>
                                     </ListItemAvatar>
-                                    <ListItemText primary={c.text} secondary={c.id} />
+                                    {editingCommentId === c.COMMENT_ID ? (
+                                        <>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                value={editContent}
+                                                onChange={(e) =>
+                                                    setEditContent(e.target.value)
+                                                }
+                                            />
+
+                                            <Button
+                                                onClick={() =>
+                                                    handleEditCommentSave(c.COMMENT_ID)
+                                                }
+                                            >
+                                                저장
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <Typography>
+                                            {c.CONTENT}
+                                        </Typography>
+                                    )}
+
+                                    {decoded.userId === c.USER_ID && (
+                                        <Box sx={{
+                                            display: "flex",
+                                            justifyContent: "flex-end",
+                                            gap: 1,
+                                            mt: 1
+                                        }}>
+                                            <Button
+                                                color="info"
+                                                onClick={() => handleEditCommentStart(c)}
+                                                size="small"
+                                            >수정
+                                            </Button>
+                                            <Button
+                                                size="small"
+                                                color="error"
+                                                onClick={() => handleDeleteComment(c.COMMENT_ID)}
+                                            >삭제
+                                            </Button>
+                                        </Box>)}
                                 </ListItem>
                             ))}
                         </List>
@@ -191,9 +376,11 @@ export default function PostCard({ feed, refreshFeed }) {
 
                 <DialogActions>
 
-                    <Button color="error" onClick={handleDelete}>
-                        삭제
-                    </Button>
+                    {decoded.userId === selectedFeed?.USER_ID && (
+                        <Button color="error" onClick={handleDelete}>
+                            삭제
+                        </Button>
+                    )}
 
                     <Button onClick={handleClose}>
                         닫기
