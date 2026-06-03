@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  Card,
+  CardContent
+} from '@mui/material';
 
 function Login() {
 
@@ -62,47 +70,81 @@ function Login() {
 
       <Box
         display="flex"
-        flexDirection="column"
         justifyContent="center"
+        alignItems="center"
         minHeight="100vh"
       >
 
-        <Typography variant="h4">로그인</Typography>
-
-        <TextField
-          label="ID"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          margin="normal"
-          fullWidth
-        />
-
-        <TextField
-          label="Password"
-          type="password"
-          value={pwd}
-          onChange={(e) => setPwd(e.target.value)}
-          margin="normal"
-          fullWidth
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleLogin();
-            }
+        <Card
+          sx={{
+            width: "100%",
+            borderRadius: 4,
+            boxShadow: 6
           }}
-        />
-
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ mt: 2 }}
-          onClick={handleLogin}
         >
-          로그인
-        </Button>
+          <CardContent sx={{ p: 4 }}>
 
-        <Typography variant="body2" sx={{ mt: 2 }}>
-          회원 아니면? <Link to="/join">회원가입</Link>
-        </Typography>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              textAlign="center"
+            >
+              Code.Snippet
+            </Typography>
+
+            <Typography
+              textAlign="center"
+              color="text.secondary"
+              sx={{ mb: 4 }}
+            >
+              개발자를 위한 코드 기록 플랫폼
+            </Typography>
+
+            <TextField
+              label="ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              margin="normal"
+              fullWidth
+            />
+
+            <TextField
+              label="Password"
+              type="password"
+              value={pwd}
+              onChange={(e) => setPwd(e.target.value)}
+              margin="normal"
+              fullWidth
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleLogin();
+                }
+              }}
+            />
+
+            <Button
+              variant="contained"
+              fullWidth
+              size="large"
+              sx={{ mt: 3 }}
+              onClick={handleLogin}
+            >
+              로그인
+            </Button>
+
+            <Typography
+              variant="body2"
+              textAlign="center"
+              sx={{ mt: 3 }}
+            >
+              회원이 아니신가요?{" "}
+              <Link to="/join">
+                회원가입
+              </Link>
+            </Typography>
+
+          </CardContent>
+        </Card>
 
       </Box>
 

@@ -16,8 +16,11 @@ import {
     ListItemText,
     ListItemAvatar,
     Avatar,
-    TextField
+    TextField,
+    Chip
 } from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 import CloseIcon from '@mui/icons-material/Close';
 import { jwtDecode } from 'jwt-decode';
@@ -209,19 +212,93 @@ export default function PostCard({ feed, refreshFeed }) {
     return (
         <>
             {/* 카드 */}
-            <Card onClick={handleOpen} style={{ cursor: 'pointer' }}>
+            <Card
+                onClick={handleOpen}
+                sx={{
+                    cursor: "pointer",
+                    borderRadius: 3,
+                    overflow: "hidden",
+                    height: "100%",
+                    transition: "0.2s",
 
-                <CardMedia
-                    component="img"
-                    height="200"
-                    image={feed.IMGPATH}
-                    alt="이미지 없음"
-                />
-
+                    "&:hover": {
+                        transform: "translateY(-5px)",
+                        boxShadow: 6
+                    }
+                }}
+            >
                 <CardContent>
-                    <Typography variant="body2">
+
+                    <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                    >
                         {feed.TITLE}
                     </Typography>
+
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                            mt: 1,
+                            minHeight: 40
+                        }}
+                    >
+                        {feed.CONTENT?.slice(0, 80)}
+                        {feed.CONTENT?.length > 80 ? "..." : ""}
+                    </Typography>
+
+                    {feed.CODE_BLOCK && (
+                        <Box
+                            sx={{
+                                mt: 2,
+                                p: 1.5,
+                                bgcolor: "#f6f8fa",
+                                borderRadius: 2,
+                                fontFamily: "monospace",
+                                fontSize: 12,
+                                maxHeight: 80,
+                                overflow: "hidden"
+                            }}
+                        >
+                            {feed.CODE_BLOCK.slice(0, 100)}
+                            {feed.CODE_BLOCK.length > 100 ? "..." : ""}
+                        </Box>
+                    )}
+
+                    <Box
+                        sx={{
+                            mt: 2,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                        }}
+                    >
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                gap: 2
+                            }}
+                        >
+                            <Typography fontSize={14}>
+                                ❤️ {feed.LIKE_COUNT}
+                            </Typography>
+
+                            <Typography fontSize={14}>
+                                💬 {feed.COMMENT_COUNT}
+                            </Typography>
+                        </Box>
+
+                        <Typography
+                            variant="caption"
+                            color="text.secondary"
+                        >
+                            by {feed.USER_ID}
+                        </Typography>
+
+                    </Box>
+
                 </CardContent>
 
             </Card>
@@ -247,13 +324,14 @@ export default function PostCard({ feed, refreshFeed }) {
 
                 <DialogContent>
 
-                    {/* 왼쪽 */}
                     <Box sx={{ p: 2 }}>
-
-                        <Typography variant="h6" fontWeight="bold">
-                            {selectedFeed?.TITLE}
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mb: 2 }}
+                        >
+                            by {selectedFeed?.USER_ID} · {new Date(selectedFeed?.CREATED_AT).toLocaleString('ko-KR')}
                         </Typography>
-
                         <Typography sx={{ mt: 2, whiteSpace: "pre-line" }}>
                             {selectedFeed?.CONTENT}
                         </Typography>
@@ -275,9 +353,15 @@ export default function PostCard({ feed, refreshFeed }) {
                         )}
 
                     </Box>
-
-                    {/* 오른쪽 댓글 */}
-
+                    <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 2 }}>
+                        {selectedFeed?.TAGS?.map((tag) => (
+                            <Chip
+                                key={tag}
+                                label={`#${tag}`}
+                                size="small"
+                            />
+                        ))}
+                    </Box>
                     <Box sx={{
                         display: "flex",
                         justifyContent: "space-between",
@@ -305,11 +389,18 @@ export default function PostCard({ feed, refreshFeed }) {
                     </Box>
                     <Box sx={{ p: 2 }}>
 
-                        <Typography variant="h6" sx={{ mb: 2 }}>
-                            댓글
+                        <Typography
+                            variant="h6"
+                            sx={{ mb: 2 }}
+                        >
+                            댓글 ({comments.length})
                         </Typography>
 
-                        <List>
+                        <List
+                            sx={{
+                                maxHeight: 300,
+                                overflowY: "auto"
+                            }}>
                             {comments.map((c) => (
                                 <ListItem
                                     key={c.COMMENT_ID}

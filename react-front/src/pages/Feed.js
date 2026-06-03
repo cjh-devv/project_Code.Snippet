@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from "jwt-decode";
-import { Container, Box, Grid2 } from '@mui/material';
+import { Container, Box, Grid2, Typography, Button } from '@mui/material';
 import PostCard from '../components/PostCard';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,11 +41,38 @@ function Feed() {
   return (
     <Container maxWidth="md">
 
+      <Box
+        sx={{
+          py: 4,
+          textAlign: "center"
+        }}
+      >
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+        >
+          Code.Snippet
+        </Typography>
+
+        <Typography color="text.secondary">
+          개발자를 위한 코드 기록 플랫폼
+        </Typography>
+      </Box>
+      <Button
+        variant="contained"
+        sx={{ mt: 2 }}
+        onClick={() => navigator("/register")}
+      >
+        글 작성
+      </Button>
       <Box mt={4}>
         <Grid2 container spacing={3}>
 
           {feeds.map(feed => (
-            <Grid2 xs={12} sm={6} md={4} key={feed.POST_ID}>
+            <Grid2 size={{
+              xs: 12,
+              md: 6
+            }} key={feed.POST_ID}>
               <PostCard
                 feed={feed}
                 refreshFeed={handleGetFeed}

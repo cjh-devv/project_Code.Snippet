@@ -3,10 +3,10 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
 import Login from './pages/Login';
 import Sub from './components/Sub';
-import Menu from './components/Menu'; 
+import Menu from './components/Menu';
 import Feed from './pages/Feed';
 import Join from './pages/Join';
-
+import Register from './pages/Register';
 
 function App() {
   const location = useLocation();
@@ -22,6 +22,7 @@ function App() {
           <Route path="/sub" element={<Sub />} />
           <Route path="/feed" element={<Feed />} />
           <Route path="/join" element={<Join />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </Box>
     </Box>

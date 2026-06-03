@@ -1,6 +1,14 @@
 import React, { useRef } from 'react';
-import { TextField, Button, Container, Typography, Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+    TextField,
+    Button,
+    Container,
+    Typography,
+    Box,
+    Card,
+    CardContent
+} from '@mui/material';
 
 function Join() {
     let idRef = useRef("");
@@ -13,98 +21,160 @@ function Join() {
         <Container maxWidth="xs">
             <Box
                 display="flex"
-                flexDirection="column"
-                alignItems="center"
                 justifyContent="center"
+                alignItems="center"
                 minHeight="100vh"
             >
-                <Typography variant="h4" gutterBottom>
-                    회원가입
-                </Typography>
-                <TextField inputRef={idRef} label="Id" variant="outlined" margin="normal" fullWidth />
-                <TextField inputRef={nickRef} label="Nickname" variant="outlined" margin="normal" fullWidth />
-                <TextField inputRef={mailRef} label="e-mail" variant="outlined" margin="normal" fullWidth />
-                <TextField
-                    inputRef={pwdRef}
-                    label="Password"
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    type="password"
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    style={{ marginTop: '20px' }}
-                    onClick={() => {
 
+                <Card
+                    sx={{
+                        width: "100%",
+                        borderRadius: 4,
+                        boxShadow: 6
+                    }}
+                >
 
-                        if (!idRef.current.value.trim()) {
-                            alert("아이디를 입력하세요");
-                            idRef.current.focus();
-                            return;
-                        }
-                        if (!nickRef.current.value.trim()) {
-                            alert("닉네임을 입력하세요");
-                            nickRef.current.focus();
-                            return;
-                        }
+                    <CardContent sx={{ p: 4 }}>
 
-                        const email = mailRef.current.value;
+                        <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                            textAlign="center"
+                        >
+                            Code.Snippet
+                        </Typography>
 
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        <Typography
+                            textAlign="center"
+                            color="text.secondary"
+                            sx={{ mb: 4 }}
+                        >
+                            개발자를 위한 코드 공유 플랫폼
+                        </Typography>
 
-                        // 이메일 공백 체크
-                        if (!email.trim()) {
-                            alert("이메일 주소를 입력하세요");
-                            mailRef.current.focus();
-                            return;
-                        }
+                        <TextField
+                            inputRef={idRef}
+                            label="ID"
+                            margin="normal"
+                            fullWidth
+                        />
 
-                        // 이메일 형식 체크
-                        if (!emailRegex.test(email)) {
-                            alert("이메일 형식이 올바르지 않습니다");
-                            mailRef.current.focus();
-                            return;
-                        }
+                        <TextField
+                            inputRef={nickRef}
+                            label="Nickname"
+                            margin="normal"
+                            fullWidth
+                        />
 
-                        if (!pwdRef.current.value.trim()) {
-                            alert("비밀번호를 입력하세요");
-                            pwdRef.current.focus();
-                            return;
-                        }
+                        <TextField
+                            inputRef={mailRef}
+                            label="Email"
+                            margin="normal"
+                            fullWidth
+                        />
 
-                        let info = {
-                            userId: idRef.current.value,
-                            nickname: nickRef.current.value,
-                            pwd: pwdRef.current.value,
-                            email: mailRef.current.value
-                        };
-                        
-                        fetch("http://localhost:3010/user/join", {
-                            method: "POST",
-                            headers: {
-                                "Content-type": "application/json"
-                            },
-                            body: JSON.stringify(info)
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                alert(data.message);
-                                if (data.isJoin) {
-                                    navigator("/");
+                        <TextField
+                            inputRef={pwdRef}
+                            label="Password"
+                            type="password"
+                            margin="normal"
+                            fullWidth
+                        />
+
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            size="large"
+                            sx={{ mt: 3 }}
+                            onClick={() => {
+
+                                if (!idRef.current.value.trim()) {
+                                    alert("아이디를 입력하세요");
+                                    idRef.current.focus();
+                                    return;
                                 }
-                            })
-                            .catch(err => {
-                                alert("서버 에러 발생!")
-                            });
-                    }}>
-                    회원가입
-                </Button>
-                <Typography variant="body2" style={{ marginTop: '10px' }}>
-                    이미 회원이라면? <Link to="/">로그인</Link>
-                </Typography>
+
+                                if (!nickRef.current.value.trim()) {
+                                    alert("닉네임을 입력하세요");
+                                    nickRef.current.focus();
+                                    return;
+                                }
+
+                                const email = mailRef.current.value;
+
+                                const emailRegex =
+                                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                                if (!email.trim()) {
+                                    alert("이메일 주소를 입력하세요");
+                                    mailRef.current.focus();
+                                    return;
+                                }
+
+                                if (!emailRegex.test(email)) {
+                                    alert("이메일 형식이 올바르지 않습니다");
+                                    mailRef.current.focus();
+                                    return;
+                                }
+
+                                if (!pwdRef.current.value.trim()) {
+                                    alert("비밀번호를 입력하세요");
+                                    pwdRef.current.focus();
+                                    return;
+                                }
+
+                                let info = {
+                                    userId: idRef.current.value,
+                                    nickname: nickRef.current.value,
+                                    pwd: pwdRef.current.value,
+                                    email: mailRef.current.value
+                                };
+
+                                fetch(
+                                    "http://localhost:3010/user/join",
+                                    {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-type":
+                                                "application/json"
+                                        },
+                                        body: JSON.stringify(info)
+                                    }
+                                )
+                                    .then(res => res.json())
+                                    .then(data => {
+
+                                        alert(data.message);
+
+                                        if (data.isJoin) {
+                                            navigator("/");
+                                        }
+
+                                    })
+                                    .catch(err => {
+                                        alert("서버 에러 발생!");
+                                    });
+
+                            }}
+                        >
+                            회원가입
+                        </Button>
+
+                        <Typography
+                            variant="body2"
+                            textAlign="center"
+                            sx={{ mt: 3 }}
+                        >
+                            이미 회원이라면?{" "}
+                            <Link to="/">
+                                로그인
+                            </Link>
+                        </Typography>
+
+                    </CardContent>
+
+                </Card>
+
             </Box>
         </Container>
     );

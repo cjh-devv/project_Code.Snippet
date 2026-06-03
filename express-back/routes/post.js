@@ -88,8 +88,8 @@ router.post('/', jwtAuthentication, async (req, res) => {
 
             await conn.execute(
                 `
-                INSERT INTO POST_TAGS (POST_ID, TAG_ID)
-                VALUES (:postId, :tagId)
+                INSERT INTO POST_TAGS (POST_TAG_ID, POST_ID, TAG_ID)
+                VALUES (SEQ_POST_TAGS.NEXTVAL, :postId, :tagId)
                 `,
                 { postId, tagId }
             );
