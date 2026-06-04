@@ -17,7 +17,8 @@ import {
     ListItemAvatar,
     Avatar,
     TextField,
-    Chip
+    Chip,
+    Tooltip
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -26,6 +27,8 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CheckIcon from '@mui/icons-material/Check';
 
 export default function PostCard({ feed, refreshFeed }) {
 
@@ -213,6 +216,24 @@ export default function PostCard({ feed, refreshFeed }) {
         setEditContent("");
     };
 
+    // 복사 버튼 부분
+    // 복사 완료 문구 표시를 위한 state
+    const [isCopied, setIsCopied] = useState(false);
+
+    const handleCopy = async (textToCopy) => {
+        try {
+            // 클립보드 API
+            await navigator.clipboard.writeText(textToCopy);
+
+            // 복사 성공 시 2초간 버튼 텍스트 변경
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        } catch (err) {
+            console.error("복사 실패:", err);
+            alert("복사에 실패했습니다.");
+        }
+    };
+
     return (
         <>
             {/* 카드 */}
@@ -369,8 +390,10 @@ export default function PostCard({ feed, refreshFeed }) {
                         {selectedFeed?.CODE_BLOCK && (
                             <Box
                                 sx={{
+                                    position: "relative", // 복사 버튼의 기준점
                                     mt: 2,
                                     p: 2,
+                                    pt: 4, // 우상단 버튼과 글자가 안 겹치게 패딩 탑
                                     bgcolor: "#f6f8fa",
                                     borderRadius: 2,
                                     fontFamily: "monospace",
@@ -379,7 +402,39 @@ export default function PostCard({ feed, refreshFeed }) {
                                     whiteSpace: "pre-line"
                                 }}
                             >
+                                {/* 코드 본문 */}
                                 {selectedFeed.CODE_BLOCK}
+
+                                {/* 우측 상단 고정 복사 버튼 */}
+                                <Box sx={{
+                                    position: "absolute",
+                                    top: 8,
+                                    right: 8,
+                                }}>
+                                    <Tooltip title={isCopied ? "복사 완료!" : "복사하기"} placement="top">
+                                        <IconButton
+                                            onClick={() => {
+                                                handleCopy(selectedFeed.CODE_BLOCK);
+                                            }}
+                                            size="small"
+                                            color={isCopied ? "success" : "default"}
+                                            sx={{
+                                                backgroundColor: "rgba(255, 255, 255, 0.8)", // 살짝 배경을 넣어 코드와 구별
+                                                "&:hover": {
+                                                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                                                },
+                                                boxShadow: "0 1px 3px rgba(0,0,0,1)", // 가벼운 그림자 효과
+                                                p: 0.5 // 패딩을 더 줄여 버튼 크기를 최소화
+                                            }}
+                                        >
+                                            {isCopied ? (
+                                                <CheckIcon sx={{ fontSize: 16 }} /> // 아이콘 크기도 숫자로 더 미세하게 조절
+                                            ) : (
+                                                <ContentCopyIcon sx={{ fontSize: 16 }} />
+                                            )}
+                                        </IconButton>
+                                    </Tooltip>
+                                </Box>
                             </Box>
                         )}
 
@@ -414,7 +469,7 @@ export default function PostCard({ feed, refreshFeed }) {
                                 {selectedFeed?.LIKE_COUNT}
                             </Typography>
                         </Box>
-                        
+
                     </Box>
                     <Box sx={{ p: 2 }}>
 
