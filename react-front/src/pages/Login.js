@@ -20,7 +20,7 @@ function Login() {
   const handleLogin = () => {
 
     if (!userId.trim() || !pwd.trim()) {
-      alert("아이디/비밀번호 입력");
+      alert("아이디와 비밀번호를 입력하세요");
       return;
     }
 

@@ -24,8 +24,27 @@ function Feed() {
         "Authorization": "Bearer " + localStorage.getItem("token")
       }
     })
-      .then(res => res.json())
+      .then(res => {
+
+        if (
+          res.status === 401 ||
+          res.status === 403
+        ) {
+
+          alert("로그인이 만료되었습니다.");
+
+          localStorage.removeItem("token");
+
+          window.location.href = "/";
+
+          throw new Error("UNAUTHORIZED");
+        }
+
+        return res.json();
+
+      })
       .then(data => {
+
         console.log("FEED DATA:", data)
         setFeeds(data.data.list);
       })
@@ -47,7 +66,7 @@ function Feed() {
           textAlign: "center"
         }}
       >
-        <Typography
+        {/* <Typography
           variant="h4"
           fontWeight="bold"
         >
@@ -56,15 +75,9 @@ function Feed() {
 
         <Typography color="text.secondary">
           개발자를 위한 코드 기록 플랫폼
-        </Typography>
+        </Typography> */}
       </Box>
-      <Button
-        variant="contained"
-        sx={{ mt: 2 }}
-        onClick={() => navigator("/register")}
-      >
-        글 작성
-      </Button>
+
       <Box mt={4}>
         <Grid2 container spacing={3}>
 

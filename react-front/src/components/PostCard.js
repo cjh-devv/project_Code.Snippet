@@ -19,11 +19,13 @@ import {
     TextField,
     Chip
 } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 import CloseIcon from '@mui/icons-material/Close';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 export default function PostCard({ feed, refreshFeed }) {
 
@@ -36,6 +38,8 @@ export default function PostCard({ feed, refreshFeed }) {
 
     const token = localStorage.getItem("token");
     const decoded = jwtDecode(token);
+
+    const navigate = useNavigate();
 
     const loadComments = () => {
 
@@ -220,6 +224,7 @@ export default function PostCard({ feed, refreshFeed }) {
                     overflow: "hidden",
                     height: "100%",
                     transition: "0.2s",
+                    borderRadius: 3,
 
                     "&:hover": {
                         transform: "translateY(-5px)",
@@ -288,17 +293,42 @@ export default function PostCard({ feed, refreshFeed }) {
                             <Typography fontSize={14}>
                                 💬 {feed.COMMENT_COUNT}
                             </Typography>
+
                         </Box>
 
-                        <Typography
-                            variant="caption"
-                            color="text.secondary"
-                        >
-                            by {feed.USER_ID}
-                        </Typography>
-
+                        <Box>
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                            >
+                                by {feed.USER_ID}
+                            </Typography>
+                            {" · "}
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                            >
+                                {new Date(feed.CREATED_AT)
+                                    .toLocaleDateString()}
+                            </Typography>
+                        </Box>
                     </Box>
-
+                    <Box
+                        sx={{
+                            mt: 1,
+                            display: "flex",
+                            gap: 0.5,
+                            flexWrap: "wrap"
+                        }}
+                    >
+                        {feed.TAGS?.slice(0, 3).map(tag => (
+                            <Chip
+                                key={tag}
+                                label={`#${tag}`}
+                                size="small"
+                            />
+                        ))}
+                    </Box>
                 </CardContent>
 
             </Card>
@@ -345,7 +375,8 @@ export default function PostCard({ feed, refreshFeed }) {
                                     borderRadius: 2,
                                     fontFamily: "monospace",
                                     fontSize: 13,
-                                    overflowX: "auto"
+                                    overflowX: "auto",
+                                    whiteSpace: "pre-line"
                                 }}
                             >
                                 {selectedFeed.CODE_BLOCK}
@@ -366,26 +397,24 @@ export default function PostCard({ feed, refreshFeed }) {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        justifyContent: "center",
                         px: 2,
                         py: 1,
-                        borderTop: "1px solid #eee",
-                        borderBottom: "1px solid #eee",
                         mt: 2
                     }}>
-
-                        <Typography variant="h6">
-                            ❤️ {selectedFeed?.LIKE_COUNT}
-                        </Typography>
-
-                        <Button
-                            variant="contained"
-                            size="small"
-                            onClick={handleLike}
-                        >
-                            {selectedFeed?.IS_LIKED
-                                ? "취소"
-                                : "좋아요"}
-                        </Button>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <IconButton
+                                aria-label="like"
+                                onClick={handleLike}
+                                sx={{ color: selectedFeed?.IS_LIKED ? "error.main" : "text.secondary" }}
+                            >
+                                {selectedFeed?.IS_LIKED ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                            </IconButton>
+                            <Typography variant="h6">
+                                {selectedFeed?.LIKE_COUNT}
+                            </Typography>
+                        </Box>
+                        
                     </Box>
                     <Box sx={{ p: 2 }}>
 
@@ -502,9 +531,18 @@ export default function PostCard({ feed, refreshFeed }) {
                 <DialogActions>
 
                     {decoded.userId === selectedFeed?.USER_ID && (
-                        <Button color="error" onClick={handleDelete}>
-                            삭제
-                        </Button>
+                        <Box>
+                            <Button
+                                onClick={() =>
+                                    navigate(`/edit/${feed.POST_ID}`)
+                                }
+                            >
+                                수정
+                            </Button>
+                            <Button color="error" onClick={handleDelete}>
+                                삭제
+                            </Button>
+                        </Box>
                     )}
 
                     <Button onClick={handleClose}>

@@ -282,6 +282,74 @@ router.get('/feed', jwtAuthentication, async (req, res) => {
 
 });
 
+router.get('/search', async (req, res) => {
+
+    const { keyword, tag } = req.query;
+
+    let conn;
+
+    try {
+
+        conn = await db.getConnection();
+
+        let sql = `
+            SELECT DISTINCT p.*
+            FROM POSTS p
+            LEFT JOIN POST_TAGS pt ON p.POST_ID = pt.POST_ID
+            LEFT JOIN TAGS t ON pt.TAG_ID = t.TAG_ID
+            WHERE 1=1
+        `;
+
+        let binds = {};
+
+        // 1. keyword 검색 (제목 + 내용)
+        if (keyword?.trim()) {
+            sql += `
+                AND (
+                    p.TITLE LIKE :keyword
+                    OR p.CONTENT LIKE :keyword
+                )
+            `;
+            binds.keyword = `%${keyword?.trim()}%`;
+        }
+
+        // 2. tag 검색
+        if (tag) {
+            sql += `
+                AND t.TAG_NAME = :tag
+            `;
+            binds.tag = tag;
+        }
+
+        sql += ` ORDER BY p.POST_ID DESC`;
+
+        const result = await conn.execute(
+            sql,
+            binds,
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        res.json({
+            result: "success",
+            count: result.rows.length,
+            data: result.rows
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            result: "fail",
+            message: "검색 실패"
+        });
+
+    } finally {
+        if (conn) await conn.close();
+    }
+
+});
+
 router.get('/:postId', async (req, res) => {
     console.log("🔥 POST DETAIL ROUTE HIT");   // ← 여기
 
@@ -345,6 +413,7 @@ router.get('/:postId/detail', jwtAuthentication, async (req, res) => {
                 P.POST_ID,
                 P.TITLE,
                 P.CONTENT,
+                P.CODE_BLOCK,
                 P.USER_ID,
                 P.CREATED_AT,
                 (SELECT COUNT(*) 
@@ -751,71 +820,6 @@ router.post('/:postId/like/toggle', jwtAuthentication, async (req, res) => {
 
 });
 
-router.get('/search', async (req, res) => {
 
-    const { keyword, tag } = req.query;
-
-    let conn;
-
-    try {
-
-        conn = await db.getConnection();
-
-        let sql = `
-            SELECT DISTINCT p.*
-            FROM POSTS p
-            LEFT JOIN POST_TAGS pt ON p.POST_ID = pt.POST_ID
-            LEFT JOIN TAGS t ON pt.TAG_ID = t.TAG_ID
-            WHERE 1=1
-        `;
-
-        let binds = {};
-
-        // 1. keyword 검색 (제목 + 내용)
-        if (keyword) {
-            sql += `
-                AND (
-                    p.TITLE LIKE :keyword
-                    OR p.CONTENT LIKE :keyword
-                )
-            `;
-            binds.keyword = `%${keyword}%`;
-        }
-
-        // 2. tag 검색
-        if (tag) {
-            sql += `
-                AND t.TAG_NAME = :tag
-            `;
-            binds.tag = tag;
-        }
-
-        sql += ` ORDER BY p.POST_ID DESC`;
-
-        const result = await conn.execute(
-            sql,
-            binds,
-            { outFormat: oracledb.OUT_FORMAT_OBJECT }
-        );
-
-        res.json({
-            result: "success",
-            data: result.rows
-        });
-
-    } catch (err) {
-
-        console.error(err);
-
-        res.status(500).json({
-            result: "fail",
-            message: "검색 실패"
-        });
-
-    } finally {
-        if (conn) await conn.close();
-    }
-
-});
 
 module.exports = router;
