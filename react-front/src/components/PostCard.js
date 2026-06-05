@@ -18,7 +18,8 @@ import {
     Avatar,
     TextField,
     Chip,
-    Tooltip
+    Tooltip,
+    Divider
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -29,6 +30,8 @@ import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/Bookmark';
 
 export default function PostCard({ feed, refreshFeed }) {
 
@@ -154,6 +157,31 @@ export default function PostCard({ feed, refreshFeed }) {
 
             });
 
+    };
+
+    //북마크 토글
+    const handleBookmark = () => {
+        fetch(`http://localhost:3010/post/${selectedFeed?.POST_ID}/bookmark/toggle`, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === "success") {
+                    // 현재 상세 피드 상태값(selectedFeed)의 IS_BOOKMARKED만 반대로 토글
+                    refreshFeed();
+                    setSelectedFeed(prev => ({
+                        ...prev,
+                        IS_BOOKMARKED: data.action === "bookmark", // 'bookmark'면 true, 'unbookmark'면 false
+                        BOOKMARK_COUNT:
+                        prev.BOOKMARK_COUNT +
+                        (prev.IS_BOOKMARKED ? -1 : 1)
+                    }));
+                }
+            })
+            .catch(err => console.error(err));
     };
 
     // 댓삭
@@ -315,6 +343,9 @@ export default function PostCard({ feed, refreshFeed }) {
                                 💬 {feed.COMMENT_COUNT}
                             </Typography>
 
+                            <Typography fontSize={14}>
+                                🔖 {feed.BOOKMARK_COUNT}
+                            </Typography>
                         </Box>
 
                         <Box>
@@ -467,6 +498,25 @@ export default function PostCard({ feed, refreshFeed }) {
                             </IconButton>
                             <Typography variant="h6">
                                 {selectedFeed?.LIKE_COUNT}
+                            </Typography>
+                        </Box>
+                        <Divider orientation="vertical" variant="middle" flexItem sx={{
+                            mx: 1,                          // 좌우 여백 
+                            borderRightWidth: '2.5px',      // 세로선 두께 설정 (기본은 1px 미만)
+                            borderColor: 'text.secondary',  // 색상도 아이콘과 맞춰서 조금 더 선명하게 변경
+                            height: '20px',                 // 높이가 너무 길다면 원하는 픽셀로 고정 가능
+                            alignSelf: 'center'
+                        }} />
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <IconButton
+                                aria-label="bookmark"
+                                onClick={handleBookmark}
+                                sx={{ color: selectedFeed?.IS_BOOKMARKED ? "primary.main" : "text.secondary" }}
+                            >
+                                {selectedFeed?.IS_BOOKMARKED ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                            </IconButton>
+                            <Typography variant="h6">
+                                {selectedFeed?.BOOKMARK_COUNT}
                             </Typography>
                         </Box>
 

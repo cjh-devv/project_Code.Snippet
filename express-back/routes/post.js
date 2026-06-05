@@ -227,7 +227,10 @@ router.get('/feed', jwtAuthentication, async (req, res) => {
                 (SELECT COUNT(*)
                  FROM POST_LIKES L
                  WHERE L.POST_ID = P.POST_ID) AS LIKE_COUNT,
-
+                -- 북마크 수
+                 (SELECT COUNT(*)
+                 FROM BOOKMARKS B
+                 WHERE B.POST_ID = P.POST_ID) AS BOOKMARK_COUNT,
                 -- 댓글 수
                 (SELECT COUNT(*)
                  FROM COMMENTS C
@@ -237,8 +240,14 @@ router.get('/feed', jwtAuthentication, async (req, res) => {
                 (SELECT COUNT(*)
                  FROM POST_LIKES L2
                  WHERE L2.POST_ID = P.POST_ID
-                 AND L2.USER_ID = :userId) AS IS_LIKED
+                 AND L2.USER_ID = :userId) AS IS_LIKED,
 
+             -- 내가 북마크 눌렀는지 (1이면 참, 0이면 거짓)
+                (SELECT COUNT(*)
+                 FROM BOOKMARKS B
+                 WHERE B.POST_ID = P.POST_ID
+                   AND B.USER_ID = :userId) AS IS_BOOKMARKED
+                
             FROM POSTS P
             ORDER BY P.CREATED_AT DESC
             OFFSET :offsetVal ROWS
@@ -872,6 +881,79 @@ router.post('/:postId/like/toggle', jwtAuthentication, async (req, res) => {
 
 });
 
+router.post('/:postId/bookmark/toggle', jwtAuthentication, async (req, res) => {
+
+    const { postId } = req.params;
+    const userId = req.user.userId; // 로그인한 유저 ID 자동 추출
+
+    let conn;
+
+    try {
+        conn = await db.getConnection();
+
+        // 1. 기존 북마크 존재 확인
+        const check = await conn.execute(
+            `
+            SELECT BOOKMARK_ID
+            FROM BOOKMARKS
+            WHERE POST_ID = :postId
+              AND USER_ID = :userId
+            `,
+            { postId, userId },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        // 2. 이미 북마크 있음 → 취소(삭제)
+        if (check.rows.length > 0) {
+            await conn.execute(
+                `
+                DELETE FROM BOOKMARKS
+                WHERE POST_ID = :postId
+                  AND USER_ID = :userId
+                `,
+                { postId, userId },
+                { autoCommit: true }
+            );
+
+            return res.json({
+                result: "success",
+                action: "unbookmark",
+                message: "북마크 취소 완료"
+            });
+        }
+
+        // 3. 없으면 추가 (BOOKMARK_ID는 IDENTITY이므로 INSERT 시 생략 가능)
+        await conn.execute(
+            `
+            INSERT INTO BOOKMARKS (
+                POST_ID,
+                USER_ID
+            )
+            VALUES (
+                :postId,
+                :userId
+            )
+            `,
+            { postId, userId },
+            { autoCommit: true }
+        );
+
+        res.json({
+            result: "success",
+            action: "bookmark",
+            message: "북마크 등록 완료"
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            result: "fail",
+            message: "서버 오류"
+        });
+    } finally {
+        if (conn) await conn.close();
+    }
+});
 
 
 module.exports = router;
