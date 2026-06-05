@@ -12,14 +12,11 @@ import {
     ListItem,
     ListItemButton,
     ListItemText,
-    Stack,
-    Chip
+    Stack
 } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PostDetailModal from '../components/PostDetailModal';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import EmailIcon from '@mui/icons-material/Email';
 
 function MyPage() {
     let [posts, setPosts] = useState([]);
@@ -97,7 +94,7 @@ function MyPage() {
 
             })
             .then(data => {
-                setPosts(data.list || []);
+                setPosts(data.list);
             })
             .catch(err => {
                 if (err.message === "UNAUTHORIZED") {
@@ -119,12 +116,10 @@ function MyPage() {
                 elevation={0}
                 sx={{
                     p: 4,
-                    borderRadius: 5, // 조금 더 둥글고 부드럽게 변경
+                    borderRadius: 4,
                     border: '1px solid',
-                    borderColor: 'rgba(0, 0, 0, 0.04)', // 테두리를 더 연하게 변경
-                    background: 'linear-gradient(to bottom right, #ffffff, #fefeff)',
-                    // 은은하고 고급스러운 레이어드 그림자 효과 적용
-                    boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.03), 0 4px 12px -2px rgba(0, 0, 0, 0.02)'
+                    borderColor: 'divider',
+                    background: 'linear-gradient(to bottom right, #ffffff, #fcfcfd)'
                 }}
             >
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 4 }}>
@@ -136,94 +131,32 @@ function MyPage() {
                             border: '3px solid #fff'
                         }}
                     />
-                    {/* 레이아웃 분할 컨테이너 */}
-                    <Box sx={{
-                        flexGrow: 1,
-                        display: 'flex',
-                        flexDirection: { xs: 'column', md: 'row' },
-                        justifyContent: 'space-between',
-                        alignItems: { xs: 'center', md: 'flex-start' },
-                        gap: 3,
-                        width: '100%'
-                    }}>
-                        {/* 가운데 영역: 닉네임, 버튼, 활동 통계 */}
-                        <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-                            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 2, mb: 2 }}>
-                                <Typography variant="h5" fontWeight="700" color="text.primary">
-                                    {info?.userInfo?.NICKNAME}
-                                </Typography>
-                                <Button variant="outlined" size="small" sx={{ borderRadius: 2, textTransform: 'none' }}>
-                                    프로필 수정
-                                </Button>
-                            </Box>
 
-                            {/* 활동 통계 */}
-                            <Box sx={{ display: 'flex', gap: 4, justifyContent: { xs: 'center', sm: 'flex-start' } }}>
-                                <Box>
-                                    <Typography variant="subtitle2" color="text.secondary">게시글</Typography>
-                                    <Typography variant="h6" fontWeight="600">{posts.length}</Typography>
-                                </Box>
-                                <Box>
-                                    <Typography variant="subtitle2" color="text.secondary">팔로워</Typography>
-                                    <Typography variant="h6" fontWeight="600">1.2k</Typography>
-                                </Box>
-                                <Box>
-                                    <Typography variant="subtitle2" color="text.secondary">팔로잉</Typography>
-                                    <Typography variant="h6" fontWeight="600">340</Typography>
-                                </Box>
-                            </Box>
+                    <Box sx={{ flexGrow: 1, textAlign: { xs: 'center', sm: 'left' } }}>
+                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 2, mb: 1 }}>
+                            <Typography variant="h5" fontWeight="700" color="text.primary">
+                                {info?.userInfo.NICKNAME}
+                            </Typography>
+                            <Button variant="outlined" size="small" sx={{ borderRadius: 2, textTransform: 'none' }}>
+                                프로필 수정
+                            </Button>
                         </Box>
 
-                        {/* 오른쪽 영역: 가입 정보 및 고유 ID 태그 */}
-                        <Box sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: { xs: 'center', md: 'flex-end' },
-                            gap: 1.2,
-                            pt: { xs: 0, md: 0.5 }
-                        }}>
-                            {/* 1. 유저 고유 ID 배지 (추천 항목: 간단하고 실용적) */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                                    User ID
-                                </Typography>
-                                <Typography variant="body2" sx={{ fontFamily: 'monospace', bgcolor: 'action.selected', px: 1, py: 0.3, borderRadius: 1.5, fontWeight: '600', color: 'text.primary' }}>
-                                    #{info?.userInfo?.USER_ID || '0000'}
-                                </Typography>
+                        {/* 활동 통계 */}
+                        <Box sx={{ display: 'flex', gap: 4, justifyContent: { xs: 'center', sm: 'flex-start' } }}>
+                            <Box>
+                                <Typography variant="subtitle2" color="text.secondary" size="small">게시글</Typography>
+                                <Typography variant="h6" fontWeight="600">{posts.length}</Typography>
                             </Box>
-
-                            {/* 2. 세련되게 다듬은 가입일 배지 */}
-                            <Chip
-                                icon={<CalendarMonthIcon fontSize="small" sx={{ color: 'primary.main !important' }} />}
-                                label={`FROM : ${info?.userInfo?.CREATED_AT
-                                    ? new Date(info.userInfo.CREATED_AT).toLocaleString('ko-KR', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    })
-                                    : '-'
-                                    }`}
-                                variant="outlined" // 기존 soft에서 테두리 스타일로 변경하여 더 깔끔함 제고
-                                size="medium"
-                                sx={{
-                                    fontWeight: '600',
-                                    borderColor: 'primary.light',
-                                    bgcolor: 'primary.lighter', // MUI 기본 테마에 없을 시 생략 가능, 은은한 배경색 적용
-                                    color: 'primary.dark',
-                                    borderRadius: '20px',
-                                    px: 0.5
-                                }}
-                            />
-
-                            {/* 3. 이메일 정보 */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                                <EmailIcon fontSize="small" sx={{ opacity: 0.7 }} />
-                                <Typography variant="body2" sx={{ fontSize: '0.85rem', letterSpacing: -0.3 }}>
-                                    {info?.userInfo?.EMAIL}
-                                </Typography>
+                            <Box>
+                                <Typography variant="subtitle2" color="text.secondary">팔로워</Typography>
+                                <Typography variant="h6" fontWeight="600">1.2k</Typography>
+                            </Box>
+                            <Box>
+                                <Typography variant="subtitle2" color="text.secondary">팔로잉</Typography>
+                                <Typography variant="h6" fontWeight="600">340</Typography>
                             </Box>
                         </Box>
-
                     </Box>
                 </Box>
             </Paper>
@@ -232,14 +165,11 @@ function MyPage() {
             <Paper
                 elevation={0}
                 sx={{
-                    p: 4,
                     mt: 4,
-                    borderRadius: 5, // 조금 더 둥글고 부드럽게 변경
+                    p: 4,
+                    borderRadius: 4,
                     border: '1px solid',
-                    borderColor: 'rgba(0, 0, 0, 0.04)', // 테두리를 더 연하게 변경
-                    background: 'linear-gradient(to bottom right, #ffffff, #fefeff)',
-                    // 은은하고 고급스러운 레이어드 그림자 효과 적용
-                    boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.03), 0 4px 12px -2px rgba(0, 0, 0, 0.02)'
+                    borderColor: 'divider'
                 }}
             >
                 <Typography variant="h6" fontWeight="700" sx={{ mb: 2 }}>

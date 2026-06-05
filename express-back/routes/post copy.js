@@ -474,7 +474,7 @@ router.get('/:postId/detail', jwtAuthentication, async (req, res) => {
             FROM POSTS P
             WHERE P.POST_ID = :postId
             `,
-            { postId, userId },
+            { postId },
             { outFormat: oracledb.OUT_FORMAT_OBJECT }
         );
 

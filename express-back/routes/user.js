@@ -9,6 +9,34 @@ require("dotenv").config();
 const JWT_KEY = process.env.jwt_key;
 const jwtAuthentication = require('../auth')
 
+router.get("/", jwtAuthentication, async (req, res) => {
+    console.log("USER ROUTE HIT");
+    const userId = req.user.userId;
+    let conn;
+    try {
+        conn = await db.getConnection();
+        const result = await conn.execute(
+            `SELECT * FROM USERS WHERE USER_ID = :userId`,
+            { userId },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+        
+        res.json({
+            result: "success",
+            userId: userId,
+            userInfo: result.rows[0],
+        });
+    } catch (error) {
+
+        console.error('Error executing query', error);
+        res.status(500).send('Error executing query');
+
+    } finally {
+        if (conn) {
+            await conn.close();
+        }
+    }
+});
 
 router.post("/join", async (req, res) => {
 
@@ -196,5 +224,6 @@ router.post('/login', async (req, res) => {
     }
 
 });
+
 
 module.exports = router;
