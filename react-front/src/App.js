@@ -11,6 +11,7 @@ import Search from './pages/Search';
 import EditPost from './pages/EditPost';
 import Mypage from './pages/Mypage';
 import ProfileEditPage from './pages/ProfileEditPage';
+import { UserProvider } from './components/context/UserContext';
 
 function App() {
   const location = useLocation();
@@ -18,21 +19,23 @@ function App() {
 
   return (
     <>
-      <CssBaseline />
-      {!isAuthPage && <Header />} {/* 로그인과 회원가입 페이지가 아닐 때만 Menu 렌더링 */}
-      <Box component="main" sx={{ p: 3, minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/sub" element={<Sub />} />
-          <Route path="/feed" element={<Feed />} />
-          <Route path="/join" element={<Join />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/edit/:postId" element={<EditPost />}/>
-          <Route path="/mypage" element={<Mypage />}/>
-          <Route path="/profile/edit" element={<ProfileEditPage />}/>
-        </Routes>
-      </Box>
+      <UserProvider>
+        <CssBaseline />
+        {!isAuthPage && <Header />} {/* 로그인과 회원가입 페이지가 아닐 때만 Menu 렌더링 */}
+        <Box component="main" sx={{ p: 3, minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/sub" element={<Sub />} />
+            <Route path="/feed" element={<Feed />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/edit/:postId" element={<EditPost />} />
+            <Route path="/mypage" element={<Mypage />} />
+            <Route path="/profile/edit" element={<ProfileEditPage />} />
+          </Routes>
+        </Box>
+      </UserProvider>
     </>
   );
 }

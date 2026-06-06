@@ -130,6 +130,8 @@ function MyPage() {
             >
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 4 }}>
                     <Avatar
+                        // PROFILE_IMAGE가 없거나 null이면 public의 /logo512.png를 기본값으로 사용
+                        src={info?.userInfo?.PROFILE_IMAGE || "/logo512.png"}
                         sx={{
                             width: 100,
                             height: 100,
@@ -137,6 +139,7 @@ function MyPage() {
                             border: '3px solid #fff'
                         }}
                     />
+
                     {/* 레이아웃 분할 컨테이너 */}
                     <Box sx={{
                         flexGrow: 1,
@@ -175,16 +178,16 @@ function MyPage() {
 
                                     {/* 2. 비밀번호 변경 버튼 */}
                                     <Button
-                                        onClick={() => navigator("/profile/edit", { state: { tab: 1 } })} 
+                                        onClick={() => navigator("/profile/edit", { state: { tab: 1 } })}
                                         variant="outlined"
                                         size="small"
-                                        color="secondary" 
+                                        color="secondary"
                                         startIcon={<LockOpenIcon fontSize="small" />}
                                         sx={{
                                             borderRadius: 2,
                                             textTransform: 'none',
                                             fontWeight: '600',
-                                            borderColor: 'divider', 
+                                            borderColor: 'divider',
                                             color: 'text.secondary',
                                             px: 1.8,
                                             py: 0.6,

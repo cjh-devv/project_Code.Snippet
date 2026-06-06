@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { UserContext } from './context/UserContext';
 import {
     Card,
     CardMedia,
@@ -42,6 +43,8 @@ export default function PostCard({ feed, refreshFeed }) {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editContent, setEditContent] = useState("");
 
+    const { globalUserInfo } = useContext(UserContext);
+    console.log(globalUserInfo);
     const token = localStorage.getItem("token");
     const decoded = jwtDecode(token);
 
@@ -176,8 +179,8 @@ export default function PostCard({ feed, refreshFeed }) {
                         ...prev,
                         IS_BOOKMARKED: data.action === "bookmark", // 'bookmark'면 true, 'unbookmark'면 false
                         BOOKMARK_COUNT:
-                        prev.BOOKMARK_COUNT +
-                        (prev.IS_BOOKMARKED ? -1 : 1)
+                            prev.BOOKMARK_COUNT +
+                            (prev.IS_BOOKMARKED ? -1 : 1)
                     }));
                 }
             })
@@ -348,14 +351,25 @@ export default function PostCard({ feed, refreshFeed }) {
                             </Typography>
                         </Box>
 
-                        <Box>
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center', // 세로축 기준 가운데 정렬로 나란히 맞추기
+                            gap: 1,               // 구성 요소 사이의 간격을 일정하게 배치
+                            color: 'text.secondary'
+                        }}>
+                            <Avatar src={globalUserInfo?.PROFILE_IMAGE || "/logo512.png"} sx={{
+                                width: 24,       // 글씨 크기와 균형이 맞도록 아바타 크기 축소
+                                height: 24,
+                                boxShadow: '0 1px 4px rgba(0,0,0,0.05)'
+                            }} />
                             <Typography
                                 variant="caption"
-                                color="text.secondary"
+                                fontWeight="600"
+                                color="text.primary"
                             >
                                 by {feed.USER_ID}
                             </Typography>
-                            {" · "}
+                            <Typography variant="caption" sx={{ mx: 0.2, opacity: 0.6 }}>·</Typography>
                             <Typography
                                 variant="caption"
                                 color="text.secondary"

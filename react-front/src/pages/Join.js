@@ -49,7 +49,7 @@ function Join() {
                             color="text.secondary"
                             sx={{ mb: 4 }}
                         >
-                            개발자를 위한 코드 공유 플랫폼
+                            개발자를 위한 코드 기록 플랫폼
                         </Typography>
 
                         <TextField

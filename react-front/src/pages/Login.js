@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { UserContext } from '../components/context/UserContext';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   TextField,
@@ -10,8 +11,9 @@ import {
   CardContent
 } from '@mui/material';
 
-function Login() {
 
+function Login() {
+  const { refreshUserInfo } = useContext(UserContext);
   const navigator = useNavigate();
 
   const [userId, setUserId] = useState("");
@@ -49,6 +51,7 @@ function Login() {
           // 2. userId 저장
           localStorage.setItem("userId", data.userId);
 
+          refreshUserInfo();
           alert(data.message);
 
           navigator("/feed");

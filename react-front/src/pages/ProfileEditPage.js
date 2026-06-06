@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import { UserContext } from '../components/context/UserContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Button, Typography, TextField, Avatar, IconButton, Tabs, Tab } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
@@ -8,6 +9,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
 
 function ProfileEditPage() {
+    const { refreshUserInfo } = useContext(UserContext);
     const navigator = useNavigate(); // 네비게이터 선언
     const DEFAULT_AVATAR = "/logo512.png";
     const location = useLocation();
@@ -74,12 +76,13 @@ function ProfileEditPage() {
             .then(data => {
                 setInfo(data);
                 console.log("info =", data);
+                console.log(info);
                 setOriginNickname(data.userInfo.NICKNAME);
                 setNickname(data.userInfo.NICKNAME);
 
                 // DB에 저장된 주소가 있으면 쓰고, 없거나 null이면 프론트 내부 기본 이미지를 매핑
-                if (data.profileImage && data.profileImage.trim() !== '') {
-                    setPreviewUrl(data.profileImage);
+                if (data.userInfo.PROFILE_IMAGE && data.userInfo.PROFILE_IMAGE.trim() !== '') {
+                    setPreviewUrl(data.userInfo.PROFILE_IMAGE);
                 } else {
                     setPreviewUrl(DEFAULT_AVATAR);
                 }
@@ -188,6 +191,11 @@ function ProfileEditPage() {
 
         const token = localStorage.getItem('token');
 
+        // console.log("--- 폼데이터 내부 확인 ---");
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(`${key}:`, value);
+        // }
+
         fetch('http://localhost:3010/profile/update', {
             method: "POST",
             headers: { 'Authorization': `Bearer ${token}` },
@@ -196,6 +204,7 @@ function ProfileEditPage() {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
+                    refreshUserInfo();
                     alert('프로필 변경이 완료되었습니다!');
                     navigator("/mypage");
                 } else {

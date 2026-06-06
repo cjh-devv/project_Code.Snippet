@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const fs = require('fs');
 const db = require('../db');
+const jwtAuthentication = require('../auth')
 
 // 1. 멀터 스토리지 및 용량 제한 설정
 const storage = multer.diskStorage({
@@ -63,8 +64,9 @@ router.post('/update', (req, res, next) => {
         }
         next();
     });
-}, async (req, res) => {
+}, jwtAuthentication, async (req, res) => {
     const userId = req.user.userId; // 인증 미들웨어에서 파싱된 토큰 유저 ID
+    console.log(req.body);
     const { nickname, isDeleteImage } = req.body;
     let connection;
 
