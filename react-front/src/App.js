@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import Search from './pages/Search';
 import EditPost from './pages/EditPost';
 import Mypage from './pages/Mypage';
+import ProfileEditPage from './pages/ProfileEditPage';
 
 function App() {
   const location = useLocation();
@@ -29,6 +30,7 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/edit/:postId" element={<EditPost />}/>
           <Route path="/mypage" element={<Mypage />}/>
+          <Route path="/profile/edit" element={<ProfileEditPage />}/>
         </Routes>
       </Box>
     </>

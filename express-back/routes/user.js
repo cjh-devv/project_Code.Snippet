@@ -225,5 +225,80 @@ router.post('/login', async (req, res) => {
 
 });
 
+// 비밀번호 변경 API
+router.post('/password-update', jwtAuthentication, async (req, res) => {
+    // 토큰 인증 미들웨어에서 해석해준 로그인 유저 ID (인증 구현에 맞게 req.user.id 등 조절)
+    const userId = req.user.userId; 
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    let connection;
+
+    // 1. 필수 예외 처리 (빈 값 및 비밀번호 확인 일치 여부)
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ success: false, message: "모든 필드를 정확히 입력해주세요." });
+    }
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ success: false, message: "새 비밀번호와 비밀번호 확인이 일치하지 않습니다." });
+    }
+    if (newPassword.length < 4) { // 보안을 위한 최소 글자수 제한
+        return res.status(400).json({ success: false, message: "새 비밀번호는 최소 4자 이상이어야 합니다." });
+    }
+
+    try {
+        connection = await db.getConnection();
+
+        // 2. USERS 테이블에서 해당 사용자의 현재 암호화된 비밀번호(PASSWORD_HASH) 조회
+        const result = await connection.execute(
+            `
+            SELECT PASSWORD_HASH
+            FROM USERS
+            WHERE USER_ID = :userId
+            `,
+            [userId],
+            { outFormat: oracledb.OUT_FORMAT_OBJECT } // 상단 선언된 명칭 확인 필요
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: "사용자를 찾을 수 없습니다." });
+        }
+
+        const hashedPasswordInDB = result.rows[0].PASSWORD_HASH;
+
+        // 3. 입력한 현재 비밀번호와 DB의 해시값 비교 검증
+        const isMatch = await bcrypt.compare(currentPassword, hashedPasswordInDB);
+
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "현재 비밀번호가 일치하지 않습니다." });
+        }
+
+        // 4. 새 비밀번호를 bcrypt를 이용해 똑같이 암호화 (Salt round: 10)
+        const saltRounds = 10;
+        const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        // 5. Oracle DB 업데이트 수행
+        await connection.execute(
+            `
+            UPDATE USERS 
+            SET PASSWORD_HASH = :newHashedPassword 
+            WHERE USER_ID = :userId
+            `,
+            [newHashedPassword, userId],
+            { autoCommit: true }
+        );
+
+        res.json({
+            success: true,
+            message: "비밀번호가 안전하게 변경되었습니다."
+        });
+
+    } catch (error) {
+        console.error('비밀번호 변경 중 서버 오류 발생:', error);
+        res.status(500).json({ success: false, message: '서버 오류가 발생했습니다.' });
+    } finally {
+        if (connection) {
+            await connection.close();
+        }
+    }
+});
+
 
 module.exports = router;

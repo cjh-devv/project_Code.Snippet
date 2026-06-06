@@ -2,7 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const oracledb = require('oracledb');
+const fs = require('fs');
 
+// 서버가 켜질 때 uploads 폴더와 그 하위 profiles 폴더가 없으면 자동으로 만들어주는 안전장치
+const profileUploadDir = path.join(__dirname, 'uploads', 'profiles');
+if (!fs.existsSync(profileUploadDir)){
+    fs.mkdirSync(profileUploadDir, { recursive: true });
+}
 // router
 const sampleRouter = require("./routes/sample");
 
@@ -21,6 +27,7 @@ app.use("/sample", sampleRouter);
 app.use("/user", require("./routes/user"));
 app.use("/post", require("./routes/post"));
 app.use("/comment", require("./routes/comment"));
+app.use("/profile", require("./routes/profile"));
 
 async function startServer() {
   try {

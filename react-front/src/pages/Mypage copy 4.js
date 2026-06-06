@@ -20,12 +20,11 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import PostDetailModal from '../components/PostDetailModal';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EmailIcon from '@mui/icons-material/Email';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 function MyPage() {
     let [posts, setPosts] = useState([]);
     let [info, setInfo] = useState(null);
-    const navigator = useNavigate();
+    const navigate = useNavigate();
     const [selectedPost, setSelectedPost] = useState(null);
     let [open, setOpen] = useState(false);
     const [feed, setFeed] = useState([]);
@@ -149,55 +148,13 @@ function MyPage() {
                     }}>
                         {/* 가운데 영역: 닉네임, 버튼, 활동 통계 */}
                         <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-                            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 1.5, mb: 2 }}>
-                                <Typography variant="h5" fontWeight="700" color="text.primary" sx={{ mr: { sm: 1 } }}>
+                            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 2, mb: 2 }}>
+                                <Typography variant="h5" fontWeight="700" color="text.primary">
                                     {info?.userInfo?.NICKNAME}
                                 </Typography>
-                                {/* 버튼 래퍼: 모바일 환경에서 가로 정렬을 유지하기 위한 박스 */}
-                                <Box sx={{ display: 'flex', gap: 1 }}>
-                                    {/* 1. 프로필 수정 버튼 */}
-                                    <Button
-                                        onClick={() => navigator("/profile/edit", { state: { tab: 0 } })}
-                                        variant="contained"
-                                        size="small"
-                                        disableElevation
-                                        sx={{
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: '600',
-                                            px: 2,
-                                            py: 0.6,
-                                            fontSize: '0.85rem'
-                                        }}
-                                    >
-                                        프로필 수정
-                                    </Button>
-
-                                    {/* 2. 비밀번호 변경 버튼 */}
-                                    <Button
-                                        onClick={() => navigator("/profile/edit", { state: { tab: 1 } })} 
-                                        variant="outlined"
-                                        size="small"
-                                        color="secondary" 
-                                        startIcon={<LockOpenIcon fontSize="small" />}
-                                        sx={{
-                                            borderRadius: 2,
-                                            textTransform: 'none',
-                                            fontWeight: '600',
-                                            borderColor: 'divider', 
-                                            color: 'text.secondary',
-                                            px: 1.8,
-                                            py: 0.6,
-                                            fontSize: '0.85rem',
-                                            '&:hover': {
-                                                borderColor: 'text.secondary',
-                                                backgroundColor: 'action.hover'
-                                            }
-                                        }}
-                                    >
-                                        비밀번호 변경
-                                    </Button>
-                                </Box>
+                                <Button variant="outlined" size="small" sx={{ borderRadius: 2, textTransform: 'none' }}>
+                                    프로필 수정
+                                </Button>
                             </Box>
 
                             {/* 활동 통계 */}
