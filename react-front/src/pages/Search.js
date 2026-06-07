@@ -36,12 +36,12 @@ function Search() {
         });
     };
 
-    // 💡 ESC 및 Enter 키 감지 핸들러
+    // ESC 및 Enter 키 감지 핸들러
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             saveSearchKeyword(keyword);
         } else if (e.key === 'Escape') {
-            // ESC 누르면 입력창과 결과를 모두 깨끗하게 비웁니다.
+            // ESC 누르면 입력창과 결과를 모두 초기화
             handleClear();
         }
     };
@@ -164,7 +164,7 @@ function Search() {
                                     clickable 
                                     onClick={() => handleRecentClick(word)}
                                     onDelete={() => handleDeleteRecent(word)}
-                                    // 💡 글자가 길어지면 가로 길이를 제한하고 ... 처리하기
+                                    // 글자가 길어지면 가로 길이를 제한하고 ... 처리하기
                                     sx={{ 
                                         borderRadius: '8px',
                                         maxWidth: '140px', // 원하는 최대 너비로 조절 가능합니다.

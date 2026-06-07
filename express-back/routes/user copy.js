@@ -8,23 +8,6 @@ const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const JWT_KEY = process.env.jwt_key;
 const jwtAuthentication = require('../auth')
-const multer = require('multer');
-const fs = require('fs');
-
-// 1. 멀터 스토리지 및 용량 제한 설정
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/profiles/'),
-    filename: (req, file, cb) => {
-        // 한글 파일명 깨짐 방지 디코딩
-        const decodedName = Buffer.from(file.originalname, 'latin1').toString('utf8');
-        cb(null, Date.now() + '-' + decodedName);
-    }
-});
-
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 } // 최대 5MB 제한
-});
 
 router.get("/", jwtAuthentication, async (req, res) => {
     console.log("USER ROUTE HIT");
@@ -37,7 +20,7 @@ router.get("/", jwtAuthentication, async (req, res) => {
             { userId },
             { outFormat: oracledb.OUT_FORMAT_OBJECT }
         );
-
+        
         res.json({
             result: "success",
             userId: userId,
@@ -55,34 +38,22 @@ router.get("/", jwtAuthentication, async (req, res) => {
     }
 });
 
-router.post("/join", (req, res, next) => {
-    upload.single('profileImg')(req, res, (err) => {
-        if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ result: false, message: "이미지 용량은 최대 5MB까지만 가능합니다." });
-        } else if (err) {
-            return res.status(500).json({ result: false, message: "파일 업로드 오류가 발생했습니다." });
-        }
-        next();
-    });
-}, async (req, res) => {
+router.post("/join", async (req, res) => {
 
     let conn;
 
     try {
-        // FormData로 전송되므로 req.body에서 텍스트 데이터를 그대로 추출
+
         const { userId, email, pwd, nickname } = req.body;
-        console.log("가입 시도 ID:", userId);
-        console.log("이메일:", email);
-        console.log("닉네임:", nickname);
+        console.log(userId);
+        console.log(email);
+        console.log(pwd);
+        console.log(nickname);
+
 
         if (!userId || !nickname || !email || !pwd) {
-            // 파일이 업로드된 상태에서 필수값이 누락되면 물리 파일 청소
-            if (req.file) {
-                const uploadedPath = req.file.destination + req.file.filename;
-                if (fs.existsSync(uploadedPath)) fs.unlinkSync(uploadedPath);
-            }
             return res.status(400).json({
-                result: false,
+                result: "fail",
                 message: "필수값 누락"
             });
         }
@@ -97,10 +68,6 @@ router.post("/join", (req, res, next) => {
         );
 
         if (userCheck.rows.length > 0) {
-            if (req.file) {
-                const uploadedPath = req.file.destination + req.file.filename;
-                if (fs.existsSync(uploadedPath)) fs.unlinkSync(uploadedPath);
-            }
             return res.status(400).json({
                 result: false,
                 message: "이미 존재하는 아이디입니다."
@@ -113,20 +80,10 @@ router.post("/join", (req, res, next) => {
         );
 
         if (emailCheck.rows.length > 0) {
-            if (req.file) {
-                const uploadedPath = req.file.destination + req.file.filename;
-                if (fs.existsSync(uploadedPath)) fs.unlinkSync(uploadedPath);
-            }
             return res.status(400).json({
                 result: false,
                 message: "이미 가입된 이메일입니다."
             });
-        }
-
-        let host = `${req.protocol}://${req.get('host')}/`;
-        let profileImageUrl = null;
-        if (req.file) {
-            profileImageUrl = host + req.file.destination + req.file.filename;
         }
 
         const result = await conn.execute(
@@ -136,30 +93,26 @@ router.post("/join", (req, res, next) => {
                 USER_ID,
                 EMAIL,
                 PASSWORD_HASH,
-                NICKNAME,
-                PROFILE_IMAGE
+                NICKNAME
             )
             VALUES
             (
                 :userId,
                 :email,
                 :hashPwd,
-                :nickname,
-                :profileImageUrl
+                :nickname
             )
             `,
             {
                 userId,
                 email,
                 hashPwd,
-                nickname,
-                profileImageUrl
+                nickname
             },
             {
                 autoCommit: true
             }
         );
-
         let isJoin = false;
         let message = "회원가입 실패!";
 
@@ -167,39 +120,30 @@ router.post("/join", (req, res, next) => {
             isJoin = true;
             message = "회원가입 성공!"
         } else {
-            // 실패 시 파일 청소
-            if (req.file) {
-                const uploadedPath = req.file.destination + req.file.filename;
-                if (fs.existsSync(uploadedPath)) fs.unlinkSync(uploadedPath);
-            }
+            //실패
         }
-
         return res.json({
             result: isJoin,
             message: message
         });
 
     } catch (error) {
+
         console.error('Error executing query', error);
-
-        // 예기치 못한 서버 에러 발생 시 가입 실패 업로드된 파일 청소
-        if (req.file) {
-            const uploadedPath = req.file.destination + req.file.filename;
-            if (fs.existsSync(uploadedPath)) fs.unlinkSync(uploadedPath);
-        }
-
         return res.status(500).json({
             result: false,
             message: "서버 오류"
         });
 
     } finally {
+
         if (conn) {
             await conn.close();
         }
-    }
-});
 
+    }
+
+});
 
 router.post('/login', async (req, res) => {
 
@@ -284,7 +228,7 @@ router.post('/login', async (req, res) => {
 // 비밀번호 변경 API
 router.post('/password-update', jwtAuthentication, async (req, res) => {
     // 토큰 인증 미들웨어에서 해석해준 로그인 유저 ID (인증 구현에 맞게 req.user.id 등 조절)
-    const userId = req.user.userId;
+    const userId = req.user.userId; 
     const { currentPassword, newPassword, confirmPassword } = req.body;
     let connection;
 

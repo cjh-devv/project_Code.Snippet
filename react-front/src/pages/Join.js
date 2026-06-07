@@ -1,180 +1,203 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-    TextField,
-    Button,
-    Container,
-    Typography,
-    Box,
-    Card,
-    CardContent
+    TextField, Button, Container, Typography, Box, Card, CardContent, Avatar, IconButton
 } from '@mui/material';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import CloseIcon from '@mui/icons-material/Close';
 
 function Join() {
-    let idRef = useRef("");
-    let pwdRef = useRef("");
-    let nickRef = useRef("");
-    let mailRef = useRef("");
-    let navigator = useNavigate();
+    const [form, setForm] = useState({ id: "", nick: "", mail: "", pwd: "", pwdCheck: "" });
+    const [errors, setErrors] = useState({ id: "", nick: "", mail: "", pwd: "", pwdCheck: "" });
+    const [isValids, setIsValids] = useState({ id: false, nick: false, mail: false, pwd: false, pwdCheck: false });
 
+    // 프로필 이미지 상태
+    const [profilePreview, setProfilePreview] = useState(null);
+    const [profileFile, setProfileFile] = useState(null);
+    const fileInputRef = useRef(null);
+    const navigator = useNavigate();
+
+    // 이미지 변경 및 용량 제한(5MB) 체크
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]; // 단일 파일 객체 추출
+        if (file) {
+            const maxSize = 5 * 1024 * 1024; // 5MB를 바이트 단위로 계산
+            
+            if (file.size > maxSize) {
+                alert("프로필 사진은 5MB 이하의 파일만 업로드 가능합니다.");
+                if (fileInputRef.current) fileInputRef.current.value = ""; // 선택 파일 초기화
+                return;
+            }
+
+            setProfileFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setProfilePreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // 이미지 초기화 핸들러
+    const handleImageReset = (e) => {
+        e.stopPropagation();
+        setProfileFile(null);
+        setProfilePreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+    // 입력값 변경 시 실시간 유효성 검사 수행
+    const handleInputChange = (field, value) => {
+        setForm(prev => ({ ...prev, [field]: value }));
+        
+        let errorMsg = "";
+        let isValid = false;
+
+        if (field === "id") {
+            if (!value.trim()) errorMsg = "아이디를 입력해주세요.";
+            else if (value.length < 4) errorMsg = "아이디는 4자 이상이어야 합니다.";
+            else isValid = true;
+            setErrors(prev => ({ ...prev, id: errorMsg }));
+            setIsValids(prev => ({ ...prev, id: isValid }));
+        }
+
+        // 닉네임 유효성 검사 규칙 (2자 ~ 10자)
+        if (field === "nick") {
+            if (!value.trim()) {
+                errorMsg = "닉네임을 입력해주세요.";
+            } else if (value.length < 2 || value.length > 10) {
+                errorMsg = "닉네임은 2자 이상 10자 이하로 입력해주세요.";
+            } else {
+                isValid = true;
+            }
+            setErrors(prev => ({ ...prev, nick: errorMsg }));
+            setIsValids(prev => ({ ...prev, nick: isValid }));
+        }
+
+        if (field === "mail") {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!value.trim()) errorMsg = "이메일을 입력해주세요.";
+            else if (!emailRegex.test(value)) errorMsg = "올바른 이메일 형식이 아닙니다.";
+            else isValid = true;
+            setErrors(prev => ({ ...prev, mail: errorMsg }));
+            setIsValids(prev => ({ ...prev, mail: isValid }));
+        }
+
+        if (field === "pwd") {
+            if (!value.trim()) errorMsg = "비밀번호를 입력해주세요.";
+            else if (value.length < 4) errorMsg = "비밀번호는 4자 이상이어야 합니다.";
+            else isValid = true;
+            setErrors(prev => ({ ...prev, pwd: errorMsg }));
+            setIsValids(prev => ({ ...prev, pwd: isValid }));
+            
+            if (form.pwdCheck && value !== form.pwdCheck) {
+                setErrors(prev => ({ ...prev, pwdCheck: "비밀번호가 일치하지 않습니다." }));
+                setIsValids(prev => ({ ...prev, pwdCheck: false }));
+            }
+        }
+
+        if (field === "pwdCheck") {
+            if (!value.trim()) errorMsg = "비밀번호 확인을 입력해주세요.";
+            else if (value !== form.pwd) errorMsg = "비밀번호가 일치하지 않습니다.";
+            else isValid = true;
+            setErrors(prev => ({ ...prev, pwdCheck: errorMsg }));
+            setIsValids(prev => ({ ...prev, pwdCheck: isValid }));
+        }
+    };
+
+    // 회원가입 완료
+    const handleJoinSubmit = () => {
+        if (!isValids.id || !isValids.nick || !isValids.mail || !isValids.pwd || !isValids.pwdCheck) {
+            alert("입력 항목을 다시 확인하고 올바르게 채워주세요.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("userId", form.id);
+        formData.append("nickname", form.nick);
+        formData.append("pwd", form.pwd);
+        formData.append("email", form.mail);
+        if (profileFile) formData.append("profileImg", profileFile);
+
+        fetch("http://localhost:3010/user/join", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if (data.result) navigator("/");
+        })
+        .catch(() => alert("서버 에러 발생!"));
+    };
     return (
         <Container maxWidth="xs">
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="100vh"
-            >
-
-                <Card
-                    sx={{
-                        width: "100%",
-                        borderRadius: 4,
-                        boxShadow: 6
-                    }}
-                >
-
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" backgroundColor="#f8fafc">
+                <Card sx={{ width: "100%", borderRadius: 6, boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.04)", p: 1 }}>
                     <CardContent sx={{ p: 4 }}>
-
-                        <Typography
-                            variant="h4"
-                            fontWeight="bold"
-                            textAlign="center"
-                        >
+                        
+                        <Typography variant="h4" fontWeight="900" textAlign="center" color="primary.main" letterSpacing="-1px">
                             Code.Snippet
                         </Typography>
-
-                        <Typography
-                            textAlign="center"
-                            color="text.secondary"
-                            sx={{ mb: 4 }}
-                        >
-                            개발자를 위한 코드 기록 플랫폼
+                        <Typography textAlign="center" color="text.secondary" variant="body2" sx={{ mb: 4, mt: 1, fontWeight: 500 }}>
+                            더 지혜로운 개발을 위한 코드 아카이빙 플랫폼
                         </Typography>
 
-                        <TextField
-                            inputRef={idRef}
-                            label="ID"
-                            margin="normal"
-                            fullWidth
-                        />
+                        {/* 프로필 사진 디자인 구역 */}
+                        <Box display="flex" flexDirection="column" alignItems="center" sx={{ mb: 3 }}>
+                            <Box position="relative">
+                                <Avatar src={profilePreview} sx={{ width: 96, height: 96, boxShadow: "0 4px 20px rgba(0,0,0,0.08)", border: "3px solid #fff", backgroundColor: "#f1f5f9" }} />
+                                {profilePreview && (
+                                    <IconButton size="small" sx={{ position: 'absolute', top: -2, right: -2, backgroundColor: '#ef4444', color: '#fff', boxShadow: "0 2px 8px rgba(239,68,68,0.3)", width: 24, height: 24, '&:hover': { backgroundColor: '#dc2626' } }} onClick={handleImageReset}>
+                                        <CloseIcon sx={{ fontSize: 14 }} />
+                                    </IconButton>
+                                )}
+                                <IconButton color="primary" component="label" sx={{ position: 'absolute', bottom: -2, right: -2, backgroundColor: '#fff', boxShadow: "0 2px 8px rgba(0,0,0,0.1)", '&:hover': { backgroundColor: '#f8fafc' }, width: 32, height: 32 }} onClick={() => fileInputRef.current.click()}>
+                                    <PhotoCameraIcon sx={{ fontSize: 18 }} />
+                                </IconButton>
+                            </Box>
+                            {/* accept="image/*"로 이미지 파일만 선택하도록 유도 */}
+                            <input type="file" ref={fileInputRef} accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5, fontWeight: 500 }}>프로필 이미지 설정 (최대 5MB)</Typography>
+                        </Box>
 
-                        <TextField
-                            inputRef={nickRef}
-                            label="Nickname"
-                            margin="normal"
-                            fullWidth
-                        />
+                        {/* 입력 폼 구역 */}
+                        <Box component="form" noValidate autoComplete="off">
+                            <TextField 
+                                label="아이디" margin="dense" fullWidth variant="outlined"
+                                value={form.id} onChange={(e) => handleInputChange("id", e.target.value)}
+                                error={!!errors.id} helperText={errors.id}
+                            />
+                            <TextField 
+                                label="닉네임" margin="dense" fullWidth variant="outlined"
+                                value={form.nick} onChange={(e) => handleInputChange("nick", e.target.value)}
+                                error={!!errors.nick} helperText={errors.nick}
+                            />
+                            <TextField 
+                                label="이메일 주소" margin="dense" fullWidth variant="outlined"
+                                value={form.mail} onChange={(e) => handleInputChange("mail", e.target.value)}
+                                error={!!errors.mail} helperText={errors.mail}
+                            />
+                            <TextField 
+                                label="비밀번호" type="password" margin="dense" fullWidth variant="outlined"
+                                value={form.pwd} onChange={(e) => handleInputChange("pwd", e.target.value)}
+                                error={!!errors.pwd} helperText={errors.pwd}
+                            />
+                            <TextField 
+                                label="비밀번호 확인" type="password" margin="dense" fullWidth variant="outlined"
+                                value={form.pwdCheck} onChange={(e) => handleInputChange("pwdCheck", e.target.value)}
+                                error={!!errors.pwdCheck} helperText={errors.pwdCheck}
+                            />
 
-                        <TextField
-                            inputRef={mailRef}
-                            label="Email"
-                            margin="normal"
-                            fullWidth
-                        />
+                            <Button variant="contained" fullWidth size="large" sx={{ mt: 4, py: 1.4, borderRadius: 2.5, fontWeight: 'bold', fontSize: '1rem', boxShadow: 'none', backgroundColor: '#1e293b', '&:hover': { backgroundColor: '#0f172a', boxShadow: '0 4px 12px rgba(15,23,42,0.15)' } }} onClick={handleJoinSubmit}>
+                                가입하기
+                            </Button>
+                        </Box>
 
-                        <TextField
-                            inputRef={pwdRef}
-                            label="Password"
-                            type="password"
-                            margin="normal"
-                            fullWidth
-                        />
-
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            size="large"
-                            sx={{ mt: 3 }}
-                            onClick={() => {
-
-                                if (!idRef.current.value.trim()) {
-                                    alert("아이디를 입력하세요");
-                                    idRef.current.focus();
-                                    return;
-                                }
-
-                                if (!nickRef.current.value.trim()) {
-                                    alert("닉네임을 입력하세요");
-                                    nickRef.current.focus();
-                                    return;
-                                }
-
-                                const email = mailRef.current.value;
-
-                                const emailRegex =
-                                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-                                if (!email.trim()) {
-                                    alert("이메일 주소를 입력하세요");
-                                    mailRef.current.focus();
-                                    return;
-                                }
-
-                                if (!emailRegex.test(email)) {
-                                    alert("이메일 형식이 올바르지 않습니다");
-                                    mailRef.current.focus();
-                                    return;
-                                }
-
-                                if (!pwdRef.current.value.trim()) {
-                                    alert("비밀번호를 입력하세요");
-                                    pwdRef.current.focus();
-                                    return;
-                                }
-
-                                let info = {
-                                    userId: idRef.current.value,
-                                    nickname: nickRef.current.value,
-                                    pwd: pwdRef.current.value,
-                                    email: mailRef.current.value
-                                };
-
-                                fetch(
-                                    "http://localhost:3010/user/join",
-                                    {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-type":
-                                                "application/json"
-                                        },
-                                        body: JSON.stringify(info)
-                                    }
-                                )
-                                    .then(res => res.json())
-                                    .then(data => {
-
-                                        alert(data.message);
-
-                                        if (data.isJoin) {
-                                            navigator("/");
-                                        }
-
-                                    })
-                                    .catch(err => {
-                                        alert("서버 에러 발생!");
-                                    });
-
-                            }}
-                        >
-                            회원가입
-                        </Button>
-
-                        <Typography
-                            variant="body2"
-                            textAlign="center"
-                            sx={{ mt: 3 }}
-                        >
-                            이미 회원이라면?{" "}
-                            <Link to="/">
-                                로그인
-                            </Link>
+                        <Typography variant="body2" textAlign="center" sx={{ mt: 4, color: 'text.secondary', fontWeight: 500 }}>
+                            이미 가입하셨나요?{" "}
+                            <Link to="/" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>로그인하기</Link>
                         </Typography>
 
                     </CardContent>
-
                 </Card>
-
             </Box>
         </Container>
     );

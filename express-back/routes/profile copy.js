@@ -67,7 +67,7 @@ router.post('/update', (req, res, next) => {
     });
 }, jwtAuthentication, async (req, res) => {
     const userId = req.user.userId; // 인증 미들웨어에서 파싱된 토큰 유저 ID
-    console.log("요청 데이터:", req.body);
+    console.log(req.body);
     const { nickname, isDeleteImage } = req.body;
     let connection;
 
@@ -77,9 +77,7 @@ router.post('/update', (req, res, next) => {
 
     try {
         connection = await db.getConnection();
-
-        // 1. 경로 실수를 막기 위해 호스트 끝의 슬래시를 제거하고 표준화
-        let host = `${req.protocol}://${req.get('host')}`;
+        let host = `${req.protocol}://${req.get('host')}/`;
 
         // 기존 파일 영구 삭제 처리를 위한 올드 이미지 경로 조회
         let findResult = await connection.execute(
@@ -87,57 +85,7 @@ router.post('/update', (req, res, next) => {
             [userId],
             { outFormat: db.OUT_FORMAT_OBJECT }
         );
-        
-        // 대소문자 및 배열/객체 형태를 모두 방어하는 안전한 추출 구조
-        let oldProfileImage = null;
-        if (findResult && findResult.rows && findResult.rows.length > 0) {
-            const firstRow = findResult.rows[0];
-            
-            // 객체 형식일 때 (대문자 또는 소문자 체크)
-            if (typeof firstRow === 'object' && !Array.isArray(firstRow)) {
-                oldProfileImage = firstRow.PROFILE_IMAGE || firstRow.profile_image || firstRow.Profile_Image;
-            } 
-            // 배열 형식일 때 (outFormat이 적용 안 되었을 경우 0번째 인덱스)
-            else if (Array.isArray(firstRow)) {
-                oldProfileImage = firstRow[0];
-            }
-        }
-
-        console.log("확인된 최종 oldProfileImage 값:", oldProfileImage);
-
-        const deletePhysicalFile = (imageUrl) => {
-            console.log("=== [삭제 디버깅 시작] ===");
-            console.log("1. DB에서 가져온 원본 이미지 URL:", imageUrl);
-            
-            if (!imageUrl) {
-                console.log("🚨 실패: 이미지 URL이 비어있거나 존재하지 않습니다.");
-                return;
-            }
-            
-            const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
-            console.log("2. URL에서 추출한 최종 파일명:", filename);
-
-            const pathOption1 = path.resolve(__dirname, '..', 'uploads', 'profiles', filename);
-            const pathOption2 = path.resolve(__dirname, '..', '..', 'uploads', 'profiles', filename);
-
-            console.log("3. [경로 후보 1] 검사 중:", pathOption1);
-            console.log("   👉 후보 1 존재 여부:", fs.existsSync(pathOption1));
-
-            console.log("4. [경로 후보 2] 검사 중:", pathOption2);
-            console.log("   👉 후보 2 존재 여부:", fs.existsSync(pathOption2));
-
-            if (fs.existsSync(pathOption1)) {
-                fs.unlinkSync(pathOption1);
-                console.log("🎯 [성공] 후보 1 경로에서 파일을 찾아서 삭제했습니다.");
-            } else if (fs.existsSync(pathOption2)) {
-                fs.unlinkSync(pathOption2);
-                console.log("🎯 [성공] 후보 2 경로에서 파일을 찾아서 삭제했습니다.");
-            } else {
-                console.log("🚨 [실패] 두 경로 모두에서 실제 파일을 찾지 못했습니다.");
-            }
-            console.log("=== [삭제 디버깅 종료] ===");
-        };
-
+        let oldProfileImage = findResult.rows[0]?.PROFILE_IMAGE;
 
         // 사용자가 '기본 이미지로 변경' 버튼을 누른 경우
         if (isDeleteImage === 'true') {
@@ -147,34 +95,44 @@ router.post('/update', (req, res, next) => {
                 { autoCommit: true }
             );
 
-            // 기존 물리 파일 서버에서 삭제
-            deletePhysicalFile(oldProfileImage);
+            // 기존 물리 파일 서버에서 청소 지우기
+            if (oldProfileImage && oldProfileImage.includes('uploads/profiles')) {
+                const filename = oldProfileImage.substring(oldProfileImage.lastIndexOf('/') + 1);
+                const oldFilePath = path.join('uploads', 'profiles', filename);
+
+                if (fs.existsSync(oldFilePath)) {
+                    fs.unlinkSync(oldFilePath);
+                }
+            }
 
             return res.json({ success: true, message: "기본 프로필로 초기화되었습니다.", nickname, profileImage: null });
         }
 
         if (req.file) {
             // 사용자가 이미지를 새로 업로드 한 경우
-            // 멀터 destination의 슬래시 유무 정돈
             let dest = req.file.destination;
-            if (dest.startsWith('/')) dest = dest.substring(1);
             if (!dest.endsWith('/')) dest += '/';
+            if (dest.startsWith('/')) dest = dest.substring(1);
 
-            // 깨끗한 URL 구조 생성 (예: http://localhost:3010/uploads/profiles/파일명.jpg)
-            let newImageUrl = `${host}/${dest}${req.file.filename}`;
+            let newImageUrl = host + req.file.destination + req.file.filename;
 
             await connection.execute(
-                `UPDATE USERS SET NICKNAME = :nickname, PROFILE_IMAGE = :profileImageUrl WHERE USER_ID = :userId`,
-                {
-                    nickname: nickname,
-                    profileImageUrl: newImageUrl, // 변수명 불일치 버그 해결
-                    userId: userId
-                },
+                `UPDATE USERS SET NICKNAME = :nickname, PROFILE_IMAGE = :newImageUrl WHERE USER_ID = :userId`,
+                [nickname, newImageUrl, userId],
                 { autoCommit: true }
             );
 
-            // 이전 이미지가 존재한다면 물리 서버에서 삭제
-            deletePhysicalFile(oldProfileImage);
+            // 이전 이미지가 기본값이 아니고 uploads 폴더 내 파일이라면 물리 서버에서 삭제
+            if (oldProfileImage && oldProfileImage.includes('uploads/profiles')) {
+                // 전체 URL 주소에서 맨 마지막 '파일명.확장자'만
+                const filename = oldProfileImage.substring(oldProfileImage.lastIndexOf('/') + 1);
+                // 물리 폴더 위치인 'uploads/profiles/파일명' 경로 생성
+                const oldFilePath = path.join('uploads', 'profiles', filename);
+
+                if (fs.existsSync(oldFilePath)) {
+                    fs.unlinkSync(oldFilePath);
+                }
+            }
 
             return res.json({
                 success: true,
@@ -199,12 +157,11 @@ router.post('/update', (req, res, next) => {
             });
         }
     } catch (err) {
-        console.error("프로필 수정 중 서버 에러 발생:", err);
+        console.error(err);
         res.status(500).send("Server Error");
     } finally {
         if (connection) await connection.close();
     }
 });
-
 
 module.exports = router;
