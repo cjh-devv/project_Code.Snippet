@@ -169,6 +169,11 @@ router.get('/mypost', jwtAuthentication, async (req, res) => {
                  FROM POST_LIKES L
                  WHERE L.POST_ID = P.POST_ID) AS LIKE_COUNT,
 
+                 -- 북마크 수
+                 (SELECT COUNT(*)
+                 FROM BOOKMARKS B
+                 WHERE B.POST_ID = P.POST_ID) AS BOOKMARK_COUNT,
+
                 -- 댓글 수
                 (SELECT COUNT(*)
                  FROM COMMENTS C
@@ -404,6 +409,52 @@ router.get('/search', async (req, res) => {
 
 });
 
+// 북마크 목록 조회 
+router.get('/my-bookmarks', jwtAuthentication, async (req, res) => {
+    const userId = req.user.userId; // 로그인한 유저 ID 자동 추출
+    let conn;
+
+    try {
+        conn = await db.getConnection();
+
+        // 사용자가 북마크한 게시글 목록 조회 (최신 북마크 순 정렬)
+        const result = await conn.execute(
+            `
+            SELECT 
+                B.BOOKMARK_ID,
+                B.CREATED_AT AS BOOKMARKED_AT,
+                P.POST_ID,
+                P.TITLE,
+                P.CONTENT,
+                P.USER_ID AS AUTHOR_ID,
+                P.CREATED_AT AS POST_CREATED_AT
+            FROM BOOKMARKS B
+            JOIN POSTS P ON B.POST_ID = P.POST_ID
+            WHERE B.USER_ID = :userId
+            ORDER BY B.CREATED_AT DESC
+            `,
+            { userId },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        res.json({
+            result: "success",
+            count: result.rows.length,
+            list: result.rows
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            result: "fail",
+            message: "서버 오류로 북마크 목록을 가져오지 못했습니다."
+        });
+    } finally {
+        if (conn) await conn.close();
+    }
+});
+
+
 router.get('/:postId', async (req, res) => {
     console.log("🔥 POST DETAIL ROUTE HIT");   // ← 여기
 
@@ -476,10 +527,19 @@ router.get('/:postId/detail', jwtAuthentication, async (req, res) => {
                 (SELECT COUNT(*)
                  FROM COMMENTS C
                  WHERE C.POST_ID = P.POST_ID) AS COMMENT_COUNT,
+                 -- 북마크 수
+                 (SELECT COUNT(*)
+                 FROM BOOKMARKS B
+                 WHERE B.POST_ID = P.POST_ID) AS BOOKMARK_COUNT,
                 (SELECT COUNT(*)
                  FROM POST_LIKES L2
                  WHERE L2.POST_ID = P.POST_ID
-                 AND L2.USER_ID = :userId) AS IS_LIKED
+                 AND L2.USER_ID = :userId) AS IS_LIKED,
+               -- 내가 북마크 눌렀는지 (1이면 참, 0이면 거짓)
+                (SELECT COUNT(*)
+                 FROM BOOKMARKS B
+                 WHERE B.POST_ID = P.POST_ID
+                   AND B.USER_ID = :userId) AS IS_BOOKMARKED
             FROM POSTS P
             WHERE P.POST_ID = :postId
             `,

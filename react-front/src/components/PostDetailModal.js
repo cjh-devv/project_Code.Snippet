@@ -23,10 +23,12 @@ import CheckIcon from '@mui/icons-material/Check';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import React, { useState, useEffect } from 'react';
 import Tooltip from '@mui/material/Tooltip';
-
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/Bookmark';
 
 function PostDetailModal({ open, onClose, feed, refreshFeed }) {
     console.log(feed);
+    const [selectedFeed, setSelectedFeed] = useState(null);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [editingCommentId, setEditingCommentId] = useState(null);
@@ -38,11 +40,19 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
         IS_LIKED: feed?.IS_LIKED,
         LIKE_COUNT: feed?.LIKE_COUNT
     });
+    const [bookmarkInfo, setBookmarkInfo] = useState({
+        IS_BOOKMARKED: feed?.IS_BOOKMARKED,
+        BOOKMARK_COUNT: feed?.BOOKMARK_COUNT
+    });
     useEffect(() => {
         if (feed) {
             setLikeInfo({
                 IS_LIKED: feed.IS_LIKED,
                 LIKE_COUNT: feed.LIKE_COUNT
+            });
+            setBookmarkInfo({
+                IS_BOOKMARKED: feed.IS_BOOKMARKED,
+                BOOKMARK_COUNT: feed.BOOKMARK_COUNT
             });
         }
     }, [feed]);
@@ -222,6 +232,31 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
         }
     };
 
+    //북마크 토글
+    const handleBookmark = () => {
+        fetch(`http://localhost:3010/post/${feed?.POST_ID}/bookmark/toggle`, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.result === "success") {
+                    // 현재 상세 피드 상태값(selectedFeed)의 IS_BOOKMARKED만 반대로 토글
+                    refreshFeed();
+                    setBookmarkInfo(prev => ({
+                        ...prev,
+                        IS_BOOKMARKED: data.action === "bookmark", // 'bookmark'면 true, 'unbookmark'면 false
+                        BOOKMARK_COUNT:
+                            prev.BOOKMARK_COUNT +
+                            (prev.IS_BOOKMARKED ? -1 : 1)
+                    }));
+                }
+            })
+            .catch(err => console.error(err));
+    };
+
     if (!feed) return null;
 
     return (
@@ -339,7 +374,25 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
                             {likeInfo?.LIKE_COUNT}
                         </Typography>
                     </Box>
-
+                    <Divider orientation="vertical" variant="middle" flexItem sx={{
+                        mx: 1,                          // 좌우 여백 
+                        borderRightWidth: '2.5px',      // 세로선 두께 설정 (기본은 1px 미만)
+                        borderColor: 'text.secondary',  // 색상도 아이콘과 맞춰서 조금 더 선명하게 변경
+                        height: '20px',                 // 높이가 너무 길다면 원하는 픽셀로 고정 가능
+                        alignSelf: 'center'
+                    }} />
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <IconButton
+                            aria-label="bookmark"
+                            onClick={handleBookmark}
+                            sx={{ color: bookmarkInfo?.IS_BOOKMARKED ? "primary.main" : "text.secondary" }}
+                        >
+                            {bookmarkInfo?.IS_BOOKMARKED ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                        </IconButton>
+                        <Typography variant="h6">
+                            {bookmarkInfo?.BOOKMARK_COUNT}
+                        </Typography>
+                    </Box>
                 </Box>
                 <Box sx={{ p: 2 }}>
 

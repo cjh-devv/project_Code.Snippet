@@ -33,8 +33,6 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckIcon from '@mui/icons-material/Check';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/Bookmark';
-import UserProfileModal from "./UserProfileModal";
-import UserLink from "./UserLink";
 
 export default function PostCard({ feed, refreshFeed }) {
 
@@ -424,15 +422,10 @@ export default function PostCard({ feed, refreshFeed }) {
                 <DialogContent>
 
                     <Box sx={{ p: 2 }}>
-                        {/* 프로필모달 */}
                         <Typography
                             variant="body2"
                             color="text.secondary"
-                            sx={{ mb: 2, cursor: "pointer" }}
-                            onClick={() => {
-                                setSelectedUserId(feed.USER_ID);
-                                setProfileOpen(true);
-                            }}
+                            sx={{ mb: 2 }}
                         >
                             by {selectedFeed?.USER_ID} · {new Date(selectedFeed?.CREATED_AT).toLocaleString('ko-KR')}
                         </Typography>
@@ -677,11 +670,7 @@ export default function PostCard({ feed, refreshFeed }) {
                     </Button>
 
                 </DialogActions>
-                <UserProfileModal
-                    open={profileOpen}
-                    userId={selectedUserId}
-                    onClose={() => setProfileOpen(false)}
-                />
+
             </Dialog>
         </>
     );

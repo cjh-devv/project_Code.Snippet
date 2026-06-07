@@ -28,6 +28,7 @@ app.use("/user", require("./routes/user"));
 app.use("/post", require("./routes/post"));
 app.use("/comment", require("./routes/comment"));
 app.use("/profile", require("./routes/profile"));
+app.use("/follow", require("./routes/follow"));
 
 async function startServer() {
   try {

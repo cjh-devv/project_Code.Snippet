@@ -356,5 +356,100 @@ router.post('/password-update', jwtAuthentication, async (req, res) => {
     }
 });
 
+router.get("/:userId/profile", jwtAuthentication,
+    async (req, res) => {
+
+        const targetUserId = req.params.userId;
+        const loginUserId = req.user.userId;
+
+        let conn;
+
+        try {
+
+            conn = await db.getConnection();
+
+            const result = await conn.execute(
+                `
+                SELECT
+                    U.USER_ID,
+                    U.NICKNAME,
+                    U.PROFILE_IMAGE,
+                    U.BIO,
+                    U.CREATED_AT,
+
+                    (
+                        SELECT COUNT(*)
+                        FROM POSTS P
+                        WHERE P.USER_ID = U.USER_ID
+                    ) AS POST_COUNT,
+
+                    (
+                        SELECT COUNT(*)
+                        FROM FOLLOWS F
+                        WHERE F.FOLLOWING_ID = U.USER_ID
+                    ) AS FOLLOWERS,
+
+                    (
+                        SELECT COUNT(*)
+                        FROM FOLLOWS F
+                        WHERE F.FOLLOWER_ID = U.USER_ID
+                    ) AS FOLLOWING,
+
+                    (
+                        SELECT COUNT(*)
+                        FROM FOLLOWS F
+                        WHERE F.FOLLOWER_ID = :loginUserId
+                        AND F.FOLLOWING_ID = U.USER_ID
+                    ) AS IS_FOLLOWING
+
+                FROM USERS U
+                WHERE U.USER_ID = :targetUserId
+                `,
+                {
+                    loginUserId,
+                    targetUserId
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                }
+            );
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({
+                    result: "fail",
+                    message: "사용자를 찾을 수 없습니다."
+                });
+            }
+
+            const profile = result.rows[0];
+
+            return res.json({
+                result: "success",
+                profile: {
+                    ...profile,
+                    IS_FOLLOWING: profile.IS_FOLLOWING > 0,
+                    IS_ME: profile.USER_ID === loginUserId
+                }
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+            return res.status(500).json({
+                result: "fail",
+                message: "서버 오류"
+            });
+
+        } finally {
+
+            if (conn) {
+                await conn.close();
+            }
+        }
+    }
+);
+
+
 
 module.exports = router;
