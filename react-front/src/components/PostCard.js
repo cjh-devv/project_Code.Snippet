@@ -47,6 +47,7 @@ export default function PostCard({ feed, refreshFeed }) {
     const [profileOpen, setProfileOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
     const { globalUserInfo } = useContext(UserContext);
+    const { refreshUserInfo } = useContext(UserContext);
     console.log(globalUserInfo);
     const token = localStorage.getItem("token");
     const decoded = jwtDecode(token);
@@ -268,6 +269,36 @@ export default function PostCard({ feed, refreshFeed }) {
         }
     };
 
+    const handleFollowToggle = () => {
+        fetch(`http://localhost:3010/follow/${selectedFeed.USER_ID}/follow`, {
+            method: selectedFeed?.IS_FOLLOWING ? "DELETE" : "POST",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token")
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.result === "success") {
+
+                    // 1) 현재 모달 UI 즉시 반영
+                    setSelectedFeed(prev => ({
+                        ...prev,
+                        IS_FOLLOWING: !prev.IS_FOLLOWING,
+                        FOLLOWER_COUNT: prev.FOLLOWER_COUNT + (prev.IS_FOLLOWING ? -1 : 1)
+                    }));
+
+                    // 2) 전역 유저 정보도 갱신 (팔로워 숫자 반영용)
+                    if (refreshUserInfo) {
+                        refreshUserInfo();
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    };
+
     return (
         <>
             {/* 카드 */}
@@ -360,7 +391,7 @@ export default function PostCard({ feed, refreshFeed }) {
                             gap: 1,               // 구성 요소 사이의 간격을 일정하게 배치
                             color: 'text.secondary'
                         }}>
-                            <Avatar src={globalUserInfo?.PROFILE_IMAGE || "/logo512.png"} sx={{
+                            <Avatar src={feed?.PROFILE_IMAGE || "/logo512.png"} sx={{
                                 width: 24,       // 글씨 크기와 균형이 맞도록 아바타 크기 축소
                                 height: 24,
                                 boxShadow: '0 1px 4px rgba(0,0,0,0.05)'
@@ -424,18 +455,59 @@ export default function PostCard({ feed, refreshFeed }) {
                 <DialogContent>
 
                     <Box sx={{ p: 2 }}>
-                        {/* 프로필모달 */}
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ mb: 2, cursor: "pointer" }}
-                            onClick={() => {
-                                setSelectedUserId(feed.USER_ID);
-                                setProfileOpen(true);
+                        {/* 클릭시 유저프로필모달 */}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                mb: 2
                             }}
                         >
-                            by {selectedFeed?.USER_ID} · {new Date(selectedFeed?.CREATED_AT).toLocaleString('ko-KR')}
-                        </Typography>
+                            {/* 좌측: 유저 정보 */}
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                    cursor: "pointer"
+                                }}
+                                onClick={() => {
+                                    setSelectedUserId(selectedFeed.USER_ID);
+                                    setProfileOpen(true);
+                                }}
+                            >
+                                <Avatar
+                                    src={feed?.PROFILE_IMAGE || "/logo512.png"}
+                                    sx={{ width: 32, height: 32 }}
+                                />
+
+                                <Box>
+                                    <Typography fontWeight="600" fontSize={14}>
+                                        {selectedFeed?.USER_ID}
+                                    </Typography>
+
+                                    <Typography variant="caption" color="text.secondary">
+                                        {new Date(selectedFeed?.CREATED_AT).toLocaleString('ko-KR')}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* 우측: 팔로우 버튼 */}
+                            {/* {globalUserInfo?.USER_ID !== selectedFeed?.USER_ID && (
+                                <Button
+                                    size="small"
+                                    variant={selectedFeed?.IS_FOLLOWING ? "outlined" : "contained"}
+                                    sx={{
+                                        borderRadius: 20,
+                                        textTransform: "none"
+                                    }}
+                                    onClick={handleFollowToggle}
+                                >
+                                    {selectedFeed?.IS_FOLLOWING ? "언팔로우" : "팔로우"}
+                                </Button>
+                            )} */}
+                        </Box>
                         <Typography sx={{ mt: 2, whiteSpace: "pre-line" }}>
                             {selectedFeed?.CONTENT}
                         </Typography>
@@ -498,6 +570,7 @@ export default function PostCard({ feed, refreshFeed }) {
                                 key={tag}
                                 label={`#${tag}`}
                                 size="small"
+                                onClick={() => navigate(`/search?keyword=${tag}`)}
                             />
                         ))}
                     </Box>
@@ -573,7 +646,16 @@ export default function PostCard({ feed, refreshFeed }) {
                                             {c.USER_ID?.charAt(0).toUpperCase()}
                                         </Avatar>
 
-                                        <Typography fontWeight="bold" fontSize={13}>
+                                        <Typography
+                                            fontWeight="bold"
+                                            fontSize={13}
+                                            sx={{ cursor: "pointer" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // 카드 클릭 이벤트 방지
+                                                setSelectedUserId(c.USER_ID);
+                                                setProfileOpen(true);
+                                            }}
+                                        >
                                             {c.USER_ID}
                                         </Typography>
                                     </Box>

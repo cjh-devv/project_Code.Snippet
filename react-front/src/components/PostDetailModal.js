@@ -25,6 +25,8 @@ import React, { useState, useEffect } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/Bookmark';
+import UserProfileModal from "./UserProfileModal";
+
 
 function PostDetailModal({ open, onClose, feed, refreshFeed }) {
     console.log(feed);
@@ -32,6 +34,8 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [editingCommentId, setEditingCommentId] = useState(null);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [profileOpen, setProfileOpen] = useState(false);
     const [editContent, setEditContent] = useState("");
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
@@ -281,6 +285,7 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
             <DialogContent>
 
                 <Box sx={{ p: 2 }}>
+
                     <Typography
                         variant="body2"
                         color="text.secondary"
@@ -350,6 +355,7 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
                             key={tag}
                             label={`#${tag}`}
                             size="small"
+                            onClick={() => navigate(`/search?keyword=${tag}`)}
                         />
                     ))}
                 </Box>
@@ -424,7 +430,16 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
                                         {c.USER_ID?.charAt(0).toUpperCase()}
                                     </Avatar>
 
-                                    <Typography fontWeight="bold" fontSize={13}>
+                                    <Typography
+                                        fontWeight="bold"
+                                        fontSize={13}
+                                        sx={{ cursor: "pointer" }}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // 카드 클릭 이벤트 방지
+                                            setSelectedUserId(c.USER_ID);
+                                            setProfileOpen(true);
+                                        }}
+                                    >
                                         {c.USER_ID}
                                     </Typography>
                                 </Box>
@@ -528,7 +543,11 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
                 </Button>
 
             </DialogActions>
-
+            <UserProfileModal
+                open={profileOpen}
+                userId={selectedUserId}
+                onClose={() => setProfileOpen(false)}
+            />
         </Dialog>
     );
 }

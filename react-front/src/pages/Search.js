@@ -14,17 +14,26 @@ import PostCard from '../components/PostCard';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import InputAdornment from '@mui/material/InputAdornment';
+import { useSearchParams } from "react-router-dom";
 
 function Search() {
     const [keyword, setKeyword] = useState("");
     const [feeds, setFeeds] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
-
+    const [searchParams] = useSearchParams();
     const [recentSearches, setRecentSearches] = useState(() => {
         const saved = localStorage.getItem('recent_searches');
         return saved ? JSON.parse(saved) : [];
     });
+
+    useEffect(() => {
+        const keywordParam = searchParams.get("keyword");
+
+        if (keywordParam) {
+            setKeyword(keywordParam);
+        }
+    }, [searchParams]);
 
     const saveSearchKeyword = (word) => {
         if (!word.trim()) return;
@@ -125,8 +134,8 @@ function Search() {
                                             <ClearIcon fontSize="small" />
                                         </IconButton>
                                     )}
-                                    <IconButton 
-                                        onClick={handleSearchButtonClick} 
+                                    <IconButton
+                                        onClick={handleSearchButtonClick}
                                         size="small"
                                         color={keyword.trim() ? "primary" : "default"}
                                     >
@@ -157,15 +166,15 @@ function Search() {
                         </Typography>
                         <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" useFlexGap sx={{ gap: 1 }}>
                             {recentSearches.map((word) => (
-                                <Chip 
-                                    key={word} 
-                                    label={word} 
+                                <Chip
+                                    key={word}
+                                    label={word}
                                     variant="outlined"
-                                    clickable 
+                                    clickable
                                     onClick={() => handleRecentClick(word)}
                                     onDelete={() => handleDeleteRecent(word)}
                                     // 글자가 길어지면 가로 길이를 제한하고 ... 처리하기
-                                    sx={{ 
+                                    sx={{
                                         borderRadius: '8px',
                                         maxWidth: '140px', // 원하는 최대 너비로 조절 가능합니다.
                                         '& .MuiChip-label': {

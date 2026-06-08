@@ -15,6 +15,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import LogoutIcon from '@mui/icons-material/Logout'; 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Logo from './Logo';
 
 import { Link, useNavigate } from 'react-router-dom'; 
 import { UserContext } from './context/UserContext'; 
@@ -63,22 +64,7 @@ function Header() {
           justifyContent: "space-between"
         }}
       >
-        <Typography
-          component={Link}
-          to="/feed"
-          sx={{
-            textDecoration: 'none',
-            fontWeight: 800,
-            fontSize: '1.4rem',
-            mr: 20,
-            '&:visited': { color: "#171717" },
-            '&:hover': { color: "#171717" }
-          }}
-        >
-          <span style={{ color: "#2563eb" }}>{"<"}</span>
-          Code.Snippet
-          <span style={{ color: "#2563eb" }}>{"/>"}</span>
-        </Typography>
+        <Logo></Logo>
 
         <Box sx={{ display: "flex", gap: 1 }}>
           <IconButton component={Link} to="/feed" color="inherit">

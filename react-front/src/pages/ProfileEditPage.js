@@ -19,6 +19,7 @@ function ProfileEditPage() {
     let [info, setInfo] = useState(null);
     const [originNickname, setOriginNickname] = useState(''); //원래 닉넴 입력 닉넴 비교 위해
     const [nickname, setNickname] = useState('');
+    const [bio, setBio] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(DEFAULT_AVATAR);
     const [isDeleteImage, setIsDeleteImage] = useState(false);
@@ -79,7 +80,7 @@ function ProfileEditPage() {
                 console.log(info);
                 setOriginNickname(data.userInfo.NICKNAME);
                 setNickname(data.userInfo.NICKNAME);
-
+                setBio(data.userInfo.BIO || '');
                 // DB에 저장된 주소가 있으면 쓰고, 없거나 null이면 프론트 내부 기본 이미지를 매핑
                 if (data.userInfo.PROFILE_IMAGE && data.userInfo.PROFILE_IMAGE.trim() !== '') {
                     setPreviewUrl(data.userInfo.PROFILE_IMAGE);
@@ -181,7 +182,7 @@ function ProfileEditPage() {
 
         const formData = new FormData();
         formData.append('nickname', nickname);
-
+        formData.append('bio', bio);
         // 백엔드로 삭제 요청 여부 전달
         formData.append('isDeleteImage', isDeleteImage);
 
@@ -303,6 +304,20 @@ function ProfileEditPage() {
                                 </Button>
                             )}
                         </Box>
+                        <TextField
+                            label="자기소개"
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
+                            multiline
+                            rows={4}
+                            fullWidth
+                            slotProps={{
+                                htmlInput: {
+                                    maxLength: 100
+                                }
+                            }}
+                            helperText={`${bio.length}/100`}
+                        />
                         <TextField label="닉네임 (2~10자)" variant="outlined" value={nickname} onChange={(e) => setNickname(e.target.value)} fullWidth error={!isNicknameValid && statusMessage !== ''} helperText={statusMessage} FormHelperTextProps={{ sx: { color: isNicknameValid ? '#2e7d32' : '#d32f2f' } }} />
                         <Button type="submit" variant="contained" color="primary" fullWidth disabled={!isNicknameValid} sx={{ py: 1.2, fontWeight: 'bold' }}>프로필 저장</Button>
                     </Box>

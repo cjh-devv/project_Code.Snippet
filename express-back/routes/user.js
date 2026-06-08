@@ -38,10 +38,32 @@ router.get("/", jwtAuthentication, async (req, res) => {
             { outFormat: oracledb.OUT_FORMAT_OBJECT }
         );
 
+         // 2. 팔로워 수
+        const followerResult = await conn.execute(
+            `SELECT COUNT(*) AS CNT
+             FROM FOLLOWS
+             WHERE FOLLOWING_ID = :userId`,
+            { userId },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        // 3. 팔로잉 수
+        const followingResult = await conn.execute(
+            `SELECT COUNT(*) AS CNT
+             FROM FOLLOWS
+             WHERE FOLLOWER_ID = :userId`,
+            { userId },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
         res.json({
             result: "success",
             userId: userId,
-            userInfo: result.rows[0],
+            userInfo: {
+                ...result.rows[0],
+                FOLLOWER_COUNT: followerResult.rows[0].CNT,
+                FOLLOWING_COUNT: followingResult.rows[0].CNT
+            }
         });
     } catch (error) {
 

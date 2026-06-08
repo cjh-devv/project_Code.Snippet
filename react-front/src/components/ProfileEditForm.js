@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Avatar,
+  Button,
+  TextField,
+  Typography
+} from '@mui/material';
 
-function ProfileEditForm({ initialNickname, initialImage, onUpdateSuccess }) {
+function ProfileEditForm({ initialNickname, initialImage, initialBio, onUpdateSuccess }) {
   const [nickname, setNickname] = useState(initialNickname || '');
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(initialImage || '');
-  
+
   const [statusMessage, setStatusMessage] = useState('');
   const [isNicknameValid, setIsNicknameValid] = useState(true);
+  const [bio, setBio] = useState(initialBio || '');
+
   const DEFAULT_AVATAR = "/assets/default-avatar.png";
 
   useEffect(() => {
     setNickname(initialNickname);
     setPreviewUrl(initialImage);
-  }, [initialNickname, initialImage]);
+    setBio(initialBio || '');
+  }, [initialNickname, initialImage, initialBio]);
 
   // 실시간 글자수 제한 예외 검증 + 중복 체크 디바운싱
   useEffect(() => {
@@ -38,22 +48,21 @@ function ProfileEditForm({ initialNickname, initialImage, onUpdateSuccess }) {
     const timer = setTimeout(async () => {
       try {
         const token = localStorage.getItem('token');
-        
-        // 🔥 [변경] axios ➡️ fetch(GET) 변경
+
         fetch(`/api/users/check-nickname?nickname=${nickname}`, {
           method: "GET",
-          headers: { 
-            'Authorization': `Bearer ${token}` 
+          headers: {
+            'Authorization': `Bearer ${token}`
           }
         })
           .then(res => res.json())
           .then(data => {
-             setStatusMessage(data.message);
-             setIsNicknameValid(data.isAvailable);
+            setStatusMessage(data.message);
+            setIsNicknameValid(data.isAvailable);
           })
           .catch(err => {
-             setStatusMessage('중복 검사 통신 오류');
-             setIsNicknameValid(false);
+            setStatusMessage('중복 검사 통신 오류');
+            setIsNicknameValid(false);
           });
       } catch (error) {
         console.error(error);
@@ -73,13 +82,13 @@ function ProfileEditForm({ initialNickname, initialImage, onUpdateSuccess }) {
         return;
       }
       setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file)); 
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    
+
     if (!isNicknameValid) {
       alert("닉네임 상태를 다시 확인해 주세요.");
       return;
@@ -87,75 +96,114 @@ function ProfileEditForm({ initialNickname, initialImage, onUpdateSuccess }) {
 
     const formData = new FormData();
     formData.append('nickname', nickname);
+    formData.append('bio', bio);
     if (imageFile) {
       formData.append('profileImg', imageFile);
     }
 
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem('token');
 
-    // 🔥 [변경] axios.post ➡️ fetch(POST) 변경
-    // ⚠️ 주의: FormData를 보낼 때는 headers에 "Content-type"을 수동으로 입력하면 파일 전송이 실패합니다!
     fetch('/api/users/profile-update', {
-        method: "POST",
-        headers: {
-            'Authorization': `Bearer ${token}` // 토큰 헤더만 정상 전송
-        },
-        body: formData // JSON.stringify가 아닌 formData 그대로 투척
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}` // 토큰 헤더만 정상 전송
+      },
+      body: formData // JSON.stringify가 아닌 formData 그대로 투척
     })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                alert('프로필 변경이 성공적으로 저장되었습니다.');
-                // 부모 컴포넌트에 실시간 UI 동기화 요청
-                onUpdateSuccess(data.nickname, data.profileImage); 
-                setImageFile(null);
-            } else {
-                alert(data.message || '저장 중 오류 발생');
-            }
-        })
-        .catch(err => {
-            alert("서버 에러 발생!");
-        });
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('프로필 변경이 성공적으로 저장되었습니다.');
+          // 부모 컴포넌트에 실시간 UI 동기화 요청
+          onUpdateSuccess(data.nickname, data.profileImage);
+          setImageFile(null);
+        } else {
+          alert(data.message || '저장 중 오류 발생');
+        }
+      })
+      .catch(err => {
+        alert("서버 에러 발생!");
+      });
   };
 
   return (
-    <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <img 
-          src={previewUrl || DEFAULT_AVATAR} 
-          alt="프사 프리뷰" 
-          onError={(e) => { e.target.src = DEFAULT_AVATAR; }} 
-          style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }} 
-        />
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <input 
-          type="text" 
-          value={nickname} 
-          onChange={(e) => setNickname(e.target.value)} 
-          style={{ padding: '8px', fontSize: '14px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-        <p style={{ fontSize: '12px', color: isNicknameValid ? '#2e7d32' : '#d32f2f', margin: '5px 0 0 0' }}>
-          {statusMessage}
-        </p>
-      </div>
-
-      <button 
-        type="submit" 
-        disabled={!isNicknameValid}
-        style={{
-          padding: '10px',
-          background: isNicknameValid ? '#007bff' : '#ccc',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: isNicknameValid ? 'pointer' : 'not-allowed'
-        }}
+    <form onSubmit={handleSave}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap={3}
       >
-        변경사항 저장하기
-      </button>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+        >
+          <Avatar
+            src={previewUrl || DEFAULT_AVATAR}
+            sx={{
+              width: 120,
+              height: 120
+            }}
+            imgProps={{
+              onError: (e) => {
+                e.target.src = DEFAULT_AVATAR;
+              }
+            }}
+          />
+
+          <Button
+            variant="outlined"
+            component="label"
+          >
+            프로필 사진 변경
+            <input
+              hidden
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </Button>
+        </Box>
+
+        <TextField
+          label="닉네임"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          fullWidth
+        />
+
+        {statusMessage && (
+          <Typography
+            variant="caption"
+            color={isNicknameValid ? "success.main" : "error.main"}
+          >
+            {statusMessage}
+          </Typography>
+        )}
+
+        <TextField
+          label="자기소개"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          multiline
+          rows={4}
+          fullWidth
+          inputProps={{
+            maxLength: 100
+          }}
+          helperText={`${bio.length}/100`}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={!isNicknameValid}
+          size="large"
+        >
+          변경사항 저장
+        </Button>
+      </Box>
     </form>
   );
 }

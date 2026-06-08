@@ -251,7 +251,12 @@ router.get('/feed', jwtAuthentication, async (req, res) => {
                 (SELECT COUNT(*)
                  FROM BOOKMARKS B
                  WHERE B.POST_ID = P.POST_ID
-                   AND B.USER_ID = :userId) AS IS_BOOKMARKED
+                   AND B.USER_ID = :userId) AS IS_BOOKMARKED,
+                   
+                (SELECT PROFILE_IMAGE
+                FROM USERS U
+                WHERE U.USER_ID = P.USER_ID
+                AND U.USER_ID = :userId) AS PROFILE_IMAGE
                 
             FROM POSTS P
             ORDER BY P.CREATED_AT DESC
@@ -367,6 +372,7 @@ router.get('/search', async (req, res) => {
                 AND (
                     p.TITLE LIKE :keyword
                     OR p.CONTENT LIKE :keyword
+                    OR t.TAG_NAME LIKE :keyword
                 )
             `;
             binds.keyword = `%${keyword?.trim()}%`;
@@ -375,9 +381,9 @@ router.get('/search', async (req, res) => {
         // 2. tag 검색
         if (tag) {
             sql += `
-                AND t.TAG_NAME = :tag
+                AND LOWER(t.TAG_NAME) LIKE LOWER(:tag)
             `;
-            binds.tag = tag;
+            binds.tag = `%${tag}%`;
         }
 
         sql += ` ORDER BY p.POST_ID DESC`;

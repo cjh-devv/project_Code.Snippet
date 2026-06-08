@@ -4,6 +4,98 @@ const jwtAuthentication = require('../auth')
 const db = require("../db");
 const oracledb = require("oracledb");
 
+router.get("/followers", jwtAuthentication, async (req, res) => {
+
+    const userId = req.user.userId;
+
+    let conn;
+
+    try {
+
+        conn = await db.getConnection();
+
+        const result = await conn.execute(
+            `
+            SELECT
+                U.USER_ID,
+                U.NICKNAME,
+                U.PROFILE_IMAGE
+            FROM FOLLOWS F
+            JOIN USERS U
+                ON F.FOLLOWER_ID = U.USER_ID
+            WHERE F.FOLLOWING_ID = :userId
+            `,
+            { userId },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        res.json({
+            result: "success",
+            list: result.rows
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            result: "fail"
+        });
+
+    } finally {
+
+        if (conn) {
+            await conn.close();
+        }
+    }
+});
+
+router.get("/followings", jwtAuthentication, async (req, res) => {
+
+    const userId = req.user.userId;
+
+    let conn;
+
+    try {
+
+        conn = await db.getConnection();
+
+        const result = await conn.execute(
+            `
+            SELECT
+                U.USER_ID,
+                U.NICKNAME,
+                U.PROFILE_IMAGE
+            FROM FOLLOWS F
+            JOIN USERS U
+                ON F.FOLLOWING_ID = U.USER_ID
+            WHERE F.FOLLOWER_ID = :userId
+            `,
+            { userId },
+            { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        res.json({
+            result: "success",
+            list: result.rows
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            result: "fail"
+        });
+
+    } finally {
+
+        if (conn) {
+            await conn.close();
+        }
+    }
+});
+
 router.post(
     "/:userId/follow",
     jwtAuthentication,
@@ -142,5 +234,9 @@ router.delete(
         }
     }
 );
+
+// router.get("/followers", jwtAuthentication, getUserProfile);
+
+// router.get("/followings", jwtAuthentication, getUserProfile);
 
 module.exports = router;

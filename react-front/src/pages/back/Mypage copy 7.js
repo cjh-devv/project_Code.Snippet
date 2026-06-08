@@ -26,8 +26,6 @@ import PostDetailModal from '../components/PostDetailModal';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EmailIcon from '@mui/icons-material/Email';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import { ProfileHeader } from '../components/ProfileHeader';
-import { ProfileBio } from '../components/ProfileBio';
 
 function MyPage() {
     let [posts, setPosts] = useState([]);
@@ -199,12 +197,197 @@ function MyPage() {
                     boxShadow: '0 12px 32px -6px rgba(0, 0, 0, 0.03), 0 4px 12px -2px rgba(0, 0, 0, 0.01)'
                 }}
             >
-                {/* 1. 상단 프로필 영역 */}
-                <ProfileHeader info={info} navigator={navigator} />
+                {/* 상단 메인 영역 (아바타 + 유저 정보 우측 정렬) */}
+                <Box sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'center', sm: 'flex-start' },
+                    gap: { xs: 3, sm: 4 }
+                }}>
+                    {/* 프로필 이미지 (기존 유지) */}
+                    <Avatar
+                        src={info?.userInfo?.PROFILE_IMAGE || "/logo512.png"}
+                        sx={{
+                            width: 100,
+                            height: 100,
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                            border: '3px solid #fff'
+                        }}
+                    />
 
-                {/* 2. 하단 README 영역 */}
-                <ProfileBio bio={info?.userInfo?.BIO} />
+                    {/* 유저 상세 정보 컨테이너 */}
+                    <Box sx={{ flexGrow: 1, width: '100%' }}>
+                        {/* 닉네임 & 유저 ID 배지 (★ 절대 고정 영역) */}
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            alignItems: { xs: 'center', sm: 'flex-start' },
+                            justifyContent: 'space-between',
+                            gap: 2,
+                            mb: 2
+                        }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, textAlign: { xs: 'center', sm: 'left' } }}>
+                                <Typography variant="h5" fontWeight="700" color="text.primary">
+                                    {info?.userInfo?.NICKNAME}
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace', bgcolor: 'action.selected', px: 1, py: 0.3, borderRadius: 1.5, fontWeight: '600', color: 'text.secondary' }}>
+                                    #{info?.userInfo?.USER_ID || '0000'}
+                                </Typography>
+                            </Box>
+
+                            {/* 우측 버튼 그룹 */}
+                            <Box sx={{ display: 'flex', gap: 1, width: { xs: '100%', sm: 'auto' }, justifyContent: 'center' }}>
+                                <Button
+                                    onClick={() => navigator("/profile/edit", { state: { tab: 0 } })}
+                                    variant="contained"
+                                    size="small"
+                                    disableElevation
+                                    sx={{
+                                        borderRadius: 2,
+                                        textTransform: 'none',
+                                        fontWeight: '600',
+                                        px: 2,
+                                        py: 0.7,
+                                        fontSize: '0.85rem',
+                                        flex: { xs: 1, sm: 'initial' }
+                                    }}
+                                >
+                                    프로필 수정
+                                </Button>
+                                <Button
+                                    onClick={() => navigator("/profile/edit", { state: { tab: 1 } })}
+                                    variant="outlined"
+                                    size="small"
+                                    color="secondary"
+                                    startIcon={<LockOpenIcon fontSize="small" />}
+                                    sx={{
+                                        borderRadius: 2,
+                                        textTransform: 'none',
+                                        fontWeight: '600',
+                                        borderColor: 'divider',
+                                        color: 'text.secondary',
+                                        px: 1.8,
+                                        py: 0.7,
+                                        fontSize: '0.85rem',
+                                        flex: { xs: 1, sm: 'initial' },
+                                        '&:hover': {
+                                            borderColor: 'text.secondary',
+                                            backgroundColor: 'action.hover'
+                                        }
+                                    }}
+                                >
+                                    비밀번호 변경
+                                </Button>
+                            </Box>
+                        </Box>
+
+                        {/* 활동 통계 (SNS형 수평 레이아웃) */}
+                        <Box sx={{
+                            display: 'flex',
+                            gap: 4,
+                            justifyContent: { xs: 'center', sm: 'flex-start' },
+                            mb: 2
+                        }}>
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.8 }}>
+                                <Typography variant="caption" color="text.secondary" fontWeight="600">POSTS</Typography>
+                                <Typography variant="h6" fontWeight="700" sx={{ lineHeight: 1 }}>{posts.length}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.8 }}>
+                                <Typography variant="caption" color="text.secondary" fontWeight="600">FOLLOWERS</Typography>
+                                <Typography variant="h6" fontWeight="700" sx={{ lineHeight: 1 }}>1.2k</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.8 }}>
+                                <Typography variant="caption" color="text.secondary" fontWeight="600">FOLLOWING</Typography>
+                                <Typography variant="h6" fontWeight="700" sx={{ lineHeight: 1 }}>340</Typography>
+                            </Box>
+                        </Box>
+
+                        {/* 가입일 및 메일 정보 (활동통계 밑으로 이동) */}
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            alignItems: { xs: 'center', sm: 'center' },
+                            gap: 2,
+                            justifyContent: 'flex-start'
+                        }}>
+                            {/* 캘린더 아이콘 복구 */}
+                            <Chip
+                                icon={<CalendarMonthIcon fontSize="small" sx={{ color: 'primary.main !important', fontSize: '1rem' }} />}
+                                label={`SINCE : ${info?.userInfo?.CREATED_AT
+                                    ? new Date(info.userInfo.CREATED_AT).toLocaleDateString('ko-KR', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit'
+                                    }).replace(/\. /g, '-').replace('.', '')
+                                    : '-'
+                                    }`}
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    fontWeight: '600',
+                                    fontFamily: 'monospace',
+                                    borderColor: 'rgba(25, 118, 210, 0.15)',
+                                    bgcolor: 'rgba(25, 118, 210, 0.02)',
+                                    color: 'primary.dark',
+                                    borderRadius: 1.5,
+                                    px: 0.5
+                                }}
+                            />
+
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, color: 'text.secondary' }}>
+                                <EmailIcon sx={{ opacity: 0.5, fontSize: '1.1rem' }} />
+                                <Typography variant="body2" sx={{ fontSize: '0.85rem', fontFamily: 'monospace' }}>
+                                    {info?.userInfo?.EMAIL}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Box>
+
+                {/* 하단 서브 영역 (꾸며진 개발자 README/BIO 스타일) */}
+                <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid', borderColor: 'rgba(0,0,0,0.04)' }}>
+                    <Box sx={{
+                        bgcolor: 'action.hover', // 은은한 코드 블록 느낌의 회색 배경
+                        border: '1px solid',
+                        borderColor: 'action.selected',
+                        borderRadius: 2,
+                        p: 2,
+                        position: 'relative',
+                        '&::before': { // 상단 가상 요소로 파일명 마킹 효과 시각화
+                            content: '"README.md"',
+                            position: 'absolute',
+                            top: -10,
+                            left: 12,
+                            bgcolor: 'background.paper',
+                            px: 1,
+                            fontSize: '0.7rem',
+                            fontWeight: '700',
+                            color: 'text.disabled',
+                            fontFamily: 'monospace',
+                            border: '1px solid',
+                            borderColor: 'action.selected',
+                            borderRadius: 1
+                        }
+                    }}>
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: 'text.primary',
+                                whiteSpace: "pre-wrap",
+                                lineHeight: 1.6,
+                                fontFamily: 'monospace', // 개발자 감성을 위한 고정폭 폰트 통일
+                                letterSpacing: -0.2,
+                                fontSize: '0.875rem'
+                            }}
+                        >
+                            {info?.userInfo?.BIO || "$ cat intro.txt\n> 등록된 자기소개가 없습니다."}
+                        </Typography>
+                    </Box>
+                </Box>
             </Paper>
+
+
+
             {/* 게시글 리스트 섹션 */}
             <Paper
                 elevation={0}
@@ -220,7 +403,7 @@ function MyPage() {
                 }}
             >
                 <Typography variant="h6" fontWeight="700" sx={{ mb: 2 }}>
-                    내가 작성한 게시글 ({posts?.length || 0})
+                    내가 작성한 게시글
                 </Typography>
 
                 <List disablePadding>

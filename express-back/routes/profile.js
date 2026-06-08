@@ -68,7 +68,7 @@ router.post('/update', (req, res, next) => {
 }, jwtAuthentication, async (req, res) => {
     const userId = req.user.userId; // 인증 미들웨어에서 파싱된 토큰 유저 ID
     console.log("요청 데이터:", req.body);
-    const { nickname, isDeleteImage } = req.body;
+    const { nickname, isDeleteImage, bio } = req.body;
     let connection;
 
     if (!nickname || nickname.trim() === '') {
@@ -110,7 +110,7 @@ router.post('/update', (req, res, next) => {
             console.log("1. DB에서 가져온 원본 이미지 URL:", imageUrl);
             
             if (!imageUrl) {
-                console.log("🚨 실패: 이미지 URL이 비어있거나 존재하지 않습니다.");
+                console.log("실패: 이미지 URL이 비어있거나 존재하지 않습니다.");
                 return;
             }
             
@@ -121,19 +121,19 @@ router.post('/update', (req, res, next) => {
             const pathOption2 = path.resolve(__dirname, '..', '..', 'uploads', 'profiles', filename);
 
             console.log("3. [경로 후보 1] 검사 중:", pathOption1);
-            console.log("   👉 후보 1 존재 여부:", fs.existsSync(pathOption1));
+            console.log("   후보 1 존재 여부:", fs.existsSync(pathOption1));
 
             console.log("4. [경로 후보 2] 검사 중:", pathOption2);
-            console.log("   👉 후보 2 존재 여부:", fs.existsSync(pathOption2));
+            console.log("   후보 2 존재 여부:", fs.existsSync(pathOption2));
 
             if (fs.existsSync(pathOption1)) {
                 fs.unlinkSync(pathOption1);
-                console.log("🎯 [성공] 후보 1 경로에서 파일을 찾아서 삭제했습니다.");
+                console.log("[성공] 후보 1 경로에서 파일을 찾아서 삭제했습니다.");
             } else if (fs.existsSync(pathOption2)) {
                 fs.unlinkSync(pathOption2);
-                console.log("🎯 [성공] 후보 2 경로에서 파일을 찾아서 삭제했습니다.");
+                console.log("[성공] 후보 2 경로에서 파일을 찾아서 삭제했습니다.");
             } else {
-                console.log("🚨 [실패] 두 경로 모두에서 실제 파일을 찾지 못했습니다.");
+                console.log("[실패] 두 경로 모두에서 실제 파일을 찾지 못했습니다.");
             }
             console.log("=== [삭제 디버깅 종료] ===");
         };
@@ -142,8 +142,8 @@ router.post('/update', (req, res, next) => {
         // 사용자가 '기본 이미지로 변경' 버튼을 누른 경우
         if (isDeleteImage === 'true') {
             await connection.execute(
-                `UPDATE USERS SET NICKNAME = :nickname, PROFILE_IMAGE = NULL WHERE USER_ID = :userId`,
-                [nickname, userId],
+                `UPDATE USERS SET NICKNAME = :nickname, BIO = :bio, PROFILE_IMAGE = NULL WHERE USER_ID = :userId`,
+                [ nickname, bio, userId ],
                 { autoCommit: true }
             );
 
@@ -164,10 +164,11 @@ router.post('/update', (req, res, next) => {
             let newImageUrl = `${host}/${dest}${req.file.filename}`;
 
             await connection.execute(
-                `UPDATE USERS SET NICKNAME = :nickname, PROFILE_IMAGE = :profileImageUrl WHERE USER_ID = :userId`,
+                `UPDATE USERS SET NICKNAME = :nickname, PROFILE_IMAGE = :profileImageUrl, BIO = :bio WHERE USER_ID = :userId`,
                 {
                     nickname: nickname,
                     profileImageUrl: newImageUrl, // 변수명 불일치 버그 해결
+                    bio: bio,
                     userId: userId
                 },
                 { autoCommit: true }
@@ -186,8 +187,8 @@ router.post('/update', (req, res, next) => {
         } else {
             // 이미지 변경 없이 닉네임만 수정한 경우
             await connection.execute(
-                `UPDATE USERS SET NICKNAME = :nickname WHERE USER_ID = :userId`,
-                [nickname, userId],
+                `UPDATE USERS SET NICKNAME = :nickname, BIO = :bio WHERE USER_ID = :userId`,
+                [nickname, bio, userId],
                 { autoCommit: true }
             );
 
