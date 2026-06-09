@@ -1,15 +1,31 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-    TextField, Button, Container, Typography, Box, Card, CardContent, Avatar, IconButton
+    TextField, Button, Container, Typography, Box, Card, CardContent, Avatar, IconButton,
+    InputAdornment
 } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import CodeIcon from '@mui/icons-material/Code';
+
 
 function Join() {
     const [form, setForm] = useState({ id: "", nick: "", mail: "", pwd: "", pwdCheck: "" });
     const [errors, setErrors] = useState({ id: "", nick: "", mail: "", pwd: "", pwdCheck: "" });
     const [isValids, setIsValids] = useState({ id: false, nick: false, mail: false, pwd: false, pwdCheck: false });
+
+    // 공통 스타일 변수
+    const inputStyle = {
+        '& .MuiOutlinedInput-root': {
+            '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' }, // 기본 테두리
+            '&:hover fieldset': { borderColor: '#818cf8' },             // 마우스 호버
+            '&.Mui-focused fieldset': { borderColor: '#818cf8' },       // 포커스 시 보라색
+        },
+        '& .MuiInputLabel-root': { color: 'rgba(255, 255, 255, 0.6)' },
+        '& .MuiInputLabel-root.Mui-focused': { color: '#818cf8' },
+        '& .MuiFormHelperText-root': { color: '#f87171' }               // 에러 메시지 붉은색
+    };
 
     // 프로필 이미지 상태
     const [profilePreview, setProfilePreview] = useState(null);
@@ -22,7 +38,7 @@ function Join() {
         const file = e.target.files[0]; // 단일 파일 객체 추출
         if (file) {
             const maxSize = 5 * 1024 * 1024; // 5MB를 바이트 단위로 계산
-            
+
             if (file.size > maxSize) {
                 alert("프로필 사진은 5MB 이하의 파일만 업로드 가능합니다.");
                 if (fileInputRef.current) fileInputRef.current.value = ""; // 선택 파일 초기화
@@ -46,7 +62,7 @@ function Join() {
     // 입력값 변경 시 실시간 유효성 검사 수행
     const handleInputChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
-        
+
         let errorMsg = "";
         let isValid = false;
 
@@ -86,7 +102,7 @@ function Join() {
             else isValid = true;
             setErrors(prev => ({ ...prev, pwd: errorMsg }));
             setIsValids(prev => ({ ...prev, pwd: isValid }));
-            
+
             if (form.pwdCheck && value !== form.pwdCheck) {
                 setErrors(prev => ({ ...prev, pwdCheck: "비밀번호가 일치하지 않습니다." }));
                 setIsValids(prev => ({ ...prev, pwdCheck: false }));
@@ -120,22 +136,41 @@ function Join() {
             method: "POST",
             body: formData
         })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-            if (data.result) navigator("/");
-        })
-        .catch(() => alert("서버 에러 발생!"));
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.result) navigator("/");
+            })
+            .catch(() => alert("서버 에러 발생!"));
     };
     return (
         <Container maxWidth="xs">
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" backgroundColor="#f8fafc">
-                <Card sx={{ width: "100%", borderRadius: 6, boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.04)", p: 1 }}>
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" >
+                <Card sx={{
+                    width: "100%",
+                    borderRadius: 4,
+                    background: 'rgba(255, 255, 255, 0.05)', // 반투명 화이트
+                    backdropFilter: 'blur(10px)',            // 흐림 효과
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+                }}>
                     <CardContent sx={{ p: 4 }}>
-                        
-                        <Typography variant="h4" fontWeight="900" textAlign="center" color="primary.main" letterSpacing="-1px">
-                            Code.Snippet
-                        </Typography>
+
+                        <Box display="flex" justifyContent="center" alignItems="center" gap={1} mb={1}>
+                            <CodeIcon sx={{ color: '#818cf8', fontSize: 32 }} />
+                            <Typography
+                                variant="h4"
+                                fontWeight="bold"
+                                textAlign="center"
+                                sx={{
+                                    fontFamily: 'Courier New, Courier, monospace',
+                                    color: '#ffffff',
+                                    letterSpacing: '1px'
+                                }}
+                            >
+                                Code.Snippet
+                            </Typography>
+                        </Box>
                         <Typography textAlign="center" color="text.secondary" variant="body2" sx={{ mb: 4, mt: 1, fontWeight: 500 }}>
                             더 지혜로운 개발을 위한 코드 아카이빙 플랫폼
                         </Typography>
@@ -160,40 +195,59 @@ function Join() {
 
                         {/* 입력 폼 구역 */}
                         <Box component="form" noValidate autoComplete="off">
-                            <TextField 
+                            <TextField
                                 label="아이디" margin="dense" fullWidth variant="outlined"
                                 value={form.id} onChange={(e) => handleInputChange("id", e.target.value)}
                                 error={!!errors.id} helperText={errors.id}
+                                sx={inputStyle}
                             />
-                            <TextField 
+                            <TextField
                                 label="닉네임" margin="dense" fullWidth variant="outlined"
                                 value={form.nick} onChange={(e) => handleInputChange("nick", e.target.value)}
                                 error={!!errors.nick} helperText={errors.nick}
+                                sx={inputStyle}
                             />
-                            <TextField 
+                            <TextField
                                 label="이메일 주소" margin="dense" fullWidth variant="outlined"
                                 value={form.mail} onChange={(e) => handleInputChange("mail", e.target.value)}
                                 error={!!errors.mail} helperText={errors.mail}
+                                sx={inputStyle}
                             />
-                            <TextField 
+                            <TextField
                                 label="비밀번호" type="password" margin="dense" fullWidth variant="outlined"
                                 value={form.pwd} onChange={(e) => handleInputChange("pwd", e.target.value)}
                                 error={!!errors.pwd} helperText={errors.pwd}
+                                sx={inputStyle}
                             />
-                            <TextField 
+                            <TextField
                                 label="비밀번호 확인" type="password" margin="dense" fullWidth variant="outlined"
                                 value={form.pwdCheck} onChange={(e) => handleInputChange("pwdCheck", e.target.value)}
                                 error={!!errors.pwdCheck} helperText={errors.pwdCheck}
+                                sx={inputStyle}
                             />
 
-                            <Button variant="contained" fullWidth size="large" sx={{ mt: 4, py: 1.4, borderRadius: 2.5, fontWeight: 'bold', fontSize: '1rem', boxShadow: 'none', backgroundColor: '#1e293b', '&:hover': { backgroundColor: '#0f172a', boxShadow: '0 4px 12px rgba(15,23,42,0.15)' } }} onClick={handleJoinSubmit}>
+                            <Button variant="contained" fullWidth size="large" sx={{
+                                mt: 4,
+                                py: 1.5,
+                                borderRadius: 2,
+                                fontWeight: 'bold',
+                                fontSize: '1rem',
+                                background: 'linear-gradient(90deg, #6366f1 0%, #a855f7 100%)', // 그라데이션
+                                boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
+                                transition: 'all 0.2s ease-in-out',
+                                '&:hover': {
+                                    background: 'linear-gradient(90deg, #4f46e5 0%, #9333ea 100%)',
+                                    transform: 'translateY(-1px)', // 마우스 올리면 1픽셀 위로 살짝 들림
+                                    boxShadow: '0 6px 20px rgba(99, 102, 241, 0.5)',
+                                }
+                            }} onClick={handleJoinSubmit}>
                                 가입하기
                             </Button>
                         </Box>
 
-                        <Typography variant="body2" textAlign="center" sx={{ mt: 4, color: 'text.secondary', fontWeight: 500 }}>
+                        <Typography variant="body2" textAlign="center" sx={{ mt: 3, color: 'rgba(255, 255, 255, 0.5)' }}>
                             이미 가입하셨나요?{" "}
-                            <Link to="/" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 700 }}>로그인하기</Link>
+                            <Link to="/" style={{ color: '#a855f7', textDecoration: 'none', fontWeight: 'bold' }}>로그인하기</Link>
                         </Typography>
 
                     </CardContent>

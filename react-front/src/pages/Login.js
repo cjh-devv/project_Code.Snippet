@@ -112,14 +112,6 @@ function Login() {
               margin="normal"
               fullWidth
               variant="outlined"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AccountCircle sx={{ color: 'rgba(255, 255, 255, 0.5)' }} />
-                  </InputAdornment>
-                ),
-                style: { color: '#ffffff' }
-              }}
               InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.6)' } }}
               sx={{
                 '& .MuiOutlinedInput-root': {
@@ -140,14 +132,6 @@ function Login() {
                 if (e.key === "Enter") {
                   handleLogin();
                 }
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockIcon sx={{ color: 'rgba(255, 255, 255, 0.5)' }} />
-                  </InputAdornment>
-                ),
-                style: { color: '#ffffff' }
               }}
               InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.6)' } }}
               sx={{
