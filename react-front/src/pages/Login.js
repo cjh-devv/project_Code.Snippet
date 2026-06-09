@@ -112,7 +112,10 @@ function Login() {
               margin="normal"
               fullWidth
               variant="outlined"
-              InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.6)' } }}
+              slotProps={{
+                inputLabel: { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+                htmlInput: { style: { color: '#ffffff' } } // 글자 타이핑 시 흰색으로 나오도록 보완
+              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
@@ -133,7 +136,10 @@ function Login() {
                   handleLogin();
                 }
               }}
-              InputLabelProps={{ style: { color: 'rgba(255, 255, 255, 0.6)' } }}
+              slotProps={{
+                inputLabel: { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+                htmlInput: { style: { color: '#ffffff' } } // 글자 타이핑 시 흰색으로 나오도록 보완
+              }}
               sx={{
                 '& .MuiOutlinedInput-root': {
                   '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },

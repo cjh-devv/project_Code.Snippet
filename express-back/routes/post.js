@@ -58,7 +58,9 @@ router.post('/', jwtAuthentication, async (req, res) => {
 
         // 2. 태그 처리
         for (let tag of tags) {
+            tag = tag.trim().toLowerCase();
 
+            if (!tag) continue;
             const result = await conn.execute(
                 `SELECT TAG_ID FROM TAGS WHERE TAG_NAME = :tag`,
                 { tag },
@@ -370,9 +372,9 @@ router.get('/search', async (req, res) => {
         if (keyword?.trim()) {
             sql += `
                 AND (
-                    p.TITLE LIKE :keyword
-                    OR p.CONTENT LIKE :keyword
-                    OR t.TAG_NAME LIKE :keyword
+                    LOWER(p.TITLE) LIKE LOWER(:keyword)
+                    OR LOWER(p.CONTENT) LIKE LOWER(:keyword)
+                    OR LOWER(t.TAG_NAME) LIKE LOWER(:keyword)
                 )
             `;
             binds.keyword = `%${keyword?.trim()}%`;
@@ -697,7 +699,7 @@ router.put('/:postId', jwtAuthentication, async (req, res) => {
         );
 
         for (let tag of tags) {
-
+            tag = tag.trim().toLowerCase();
             const result = await conn.execute(
                 `SELECT TAG_ID FROM TAGS WHERE TAG_NAME = :tag`,
                 { tag },

@@ -200,30 +200,50 @@ function Join() {
                                 value={form.id} onChange={(e) => handleInputChange("id", e.target.value)}
                                 error={!!errors.id} helperText={errors.id}
                                 sx={inputStyle}
+                                slotProps={{
+                                    inputLabel: { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+                                    htmlInput: { style: { color: '#ffffff' } } // 글자 타이핑 시 흰색으로 나오도록 보완
+                                }}
                             />
                             <TextField
                                 label="닉네임" margin="dense" fullWidth variant="outlined"
                                 value={form.nick} onChange={(e) => handleInputChange("nick", e.target.value)}
                                 error={!!errors.nick} helperText={errors.nick}
                                 sx={inputStyle}
+                                slotProps={{
+                                    inputLabel: { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+                                    htmlInput: { style: { color: '#ffffff' } } // 글자 타이핑 시 흰색으로 나오도록 보완
+                                }}
                             />
                             <TextField
                                 label="이메일 주소" margin="dense" fullWidth variant="outlined"
                                 value={form.mail} onChange={(e) => handleInputChange("mail", e.target.value)}
                                 error={!!errors.mail} helperText={errors.mail}
                                 sx={inputStyle}
+                                slotProps={{
+                                    inputLabel: { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+                                    htmlInput: { style: { color: '#ffffff' } } // 글자 타이핑 시 흰색으로 나오도록 보완
+                                }}
                             />
                             <TextField
                                 label="비밀번호" type="password" margin="dense" fullWidth variant="outlined"
                                 value={form.pwd} onChange={(e) => handleInputChange("pwd", e.target.value)}
                                 error={!!errors.pwd} helperText={errors.pwd}
                                 sx={inputStyle}
+                                slotProps={{
+                                    inputLabel: { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+                                    htmlInput: { style: { color: '#ffffff' } } // 글자 타이핑 시 흰색으로 나오도록 보완
+                                }}
                             />
                             <TextField
                                 label="비밀번호 확인" type="password" margin="dense" fullWidth variant="outlined"
                                 value={form.pwdCheck} onChange={(e) => handleInputChange("pwdCheck", e.target.value)}
                                 error={!!errors.pwdCheck} helperText={errors.pwdCheck}
                                 sx={inputStyle}
+                                slotProps={{
+                                    inputLabel: { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+                                    htmlInput: { style: { color: '#ffffff' } } // 글자 타이핑 시 흰색으로 나오도록 보완
+                                }}
                             />
 
                             <Button variant="contained" fullWidth size="large" sx={{
