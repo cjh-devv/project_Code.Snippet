@@ -49,7 +49,6 @@ Code.Snippet은 개발 과정에서 작성한 트러블슈팅, 코드 메모, �
 | 기술 스택 (Tech Stack) | 사용 목적 및 상세 내용 |
 |-----------------------|------------------------|
 | ![Oracle](https://img.shields.io/badge/Oracle-F80000?style=flat-square&logo=oracle&logoColor=white) | 대용량 데이터 트랜잭션 관리 및 관계형 데이터베이스(RDBMS) 설계 |
-| ![Open API](https://img.shields.io/badge/Open_API-4CAF50?style=flat-square&logo=openapiinitiative&logoColor=white) | 공공데이터 포털 오픈 API 연동 및 필요한 외부 데이터 포맷팅 파싱 |
 | ![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white) | 전체 소스코드 편집 및 로컬 확장 프로그램을 활용한 개발 환경 구축 |
 | ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) | Git 기반 소스코드 버전 관리 및 GitHub 원격 저장소를 활용한 백업 |
 | ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white) | 화면 와이어프레임 설계 및 UI/UX 프로토타이핑 구현 |
