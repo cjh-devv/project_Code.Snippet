@@ -23,7 +23,7 @@ function EditPost() {
     const titleRef = useRef();
     const contentRef = useRef();
     const codeRef = useRef();
-
+    const tagRef = useRef();
     useEffect(() => {
 
         fetch(`http://localhost:3010/post/${postId}/detail`, {
@@ -41,7 +41,9 @@ function EditPost() {
                 titleRef.current.value = post.TITLE;
                 contentRef.current.value = post.CONTENT;
                 codeRef.current.value = post.CODE_BLOCK || "";
-
+                tagRef.current.value =
+                    post.TAGS?.join(", ")
+                    || "";
             });
 
     }, [postId]);
@@ -51,6 +53,11 @@ function EditPost() {
         const title = titleRef.current.value.trim();
         const content = contentRef.current.value.trim();
         const codeBlock = codeRef.current.value.trim();
+
+        const tags = tagRef.current?.value
+            ?.split(",")
+            ?.map(tag => tag.trim())
+            ?.filter(tag => tag);
 
         fetch(
             `http://localhost:3010/post/${postId}`,
@@ -64,7 +71,8 @@ function EditPost() {
                 body: JSON.stringify({
                     title,
                     content,
-                    codeBlock
+                    codeBlock,
+                    tags
                 })
             }
         )
@@ -127,7 +135,13 @@ function EditPost() {
                             rows={10}
                             margin="normal"
                         />
-
+                        <TextField
+                            inputRef={tagRef}
+                            label="태그 (쉼표로 구분)"
+                            fullWidth
+                            margin="normal"
+                            placeholder="react, express, oracle"
+                        />
                         <Box
                             sx={{
                                 display: "flex",
@@ -140,8 +154,9 @@ function EditPost() {
                                 variant="contained"
                                 onClick={() => {
                                     if (window.confirm("수정하시겠습니까?")) {
-                                       handleUpdate();
-                                    }}}
+                                        handleUpdate();
+                                    }
+                                }}
                             >
                                 수정
                             </Button>

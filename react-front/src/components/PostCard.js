@@ -83,6 +83,7 @@ export default function PostCard({ feed, refreshFeed }) {
         setOpen(false);
         setSelectedFeed(null);
         setComments([]);
+        setNewComment("");
     };
 
     // 댓글 추가
@@ -426,6 +427,7 @@ export default function PostCard({ feed, refreshFeed }) {
                                 key={tag}
                                 label={`#${tag}`}
                                 size="small"
+                                sx={{ bgcolor: 'primary.light', color: 'primary.dark' }}
                             />
                         ))}
                     </Box>
@@ -571,6 +573,7 @@ export default function PostCard({ feed, refreshFeed }) {
                                 label={`#${tag}`}
                                 size="small"
                                 onClick={() => navigate(`/search?keyword=${tag}`)}
+                                sx={{ bgcolor: 'primary.light', color: 'primary.dark' }}
                             />
                         ))}
                     </Box>

@@ -3,7 +3,7 @@ import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Logo() {
-    const MAIN_BLUE = '#0969DA'; // 깃허브 블루
+    const MAIN_BLUE = '#6366f1'; // 깃허브 블루
 
     return (
         <Box

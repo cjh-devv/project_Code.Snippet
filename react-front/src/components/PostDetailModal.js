@@ -79,6 +79,13 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
         }
     }, [open, feed]);
 
+    useEffect(() => {
+        setNewComment("");
+        setEditingCommentId(null);
+        setEditContent("");
+    }, [feed?.POST_ID]);
+
+
     const handleAddComment = () => {
 
         if (!newComment.trim()) return;
@@ -356,6 +363,7 @@ function PostDetailModal({ open, onClose, feed, refreshFeed }) {
                             label={`#${tag}`}
                             size="small"
                             onClick={() => navigate(`/search?keyword=${tag}`)}
+                            sx={{ bgcolor: 'primary.light', color: 'primary.dark' }}
                         />
                     ))}
                 </Box>
