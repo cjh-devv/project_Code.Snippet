@@ -56,7 +56,10 @@ Code.Snippet은 개발 과정에서 작성한 트러블슈팅, 코드 메모, �
 ## 🖥 사용 기술
 
 ### 🎨 Frontend
-<table align="center"><tr><td align="center" width="250" bgcolor="#f9f9f9"><b>기술 스택 (Tech Stack)</b></td><td align="center" width="450" bgcolor="#f9f9f9"><b>사용 목적 및 상세 내용</b></td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>컴포넌트 기반 UI 개발 및 React Router를 통한 웹 페이지 라우팅/동적 파라미터 처리</td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>Material-UI 머티리얼 디자인 적용 및 JavaScript 내장 <b>Fetch API</b> 기반 비동기 데이터 통신</td></tr></table>
+| 기술 스택 (Tech Stack) | 사용 목적 및 상세 내용 |
+|-----------------------|------------------------|
+| ![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB) ![React Router](https://img.shields.io/badge/React_Router-CA4245?style=flat-square&logo=react-router&logoColor=white) | 컴포넌트 기반 UI 개발 및 React Router를 통한 웹 페이지 라우팅 및 동적 파라미터 처리 |
+| ![Material UI](https://img.shields.io/badge/Material_UI-007FFF?style=flat-square&logo=mui&logoColor=white) ![Fetch API](https://img.shields.io/badge/Fetch_API-000000?style=flat-square&logo=javascript&logoColor=F7DF1E) | Material-UI 머티리얼 디자인 적용 및 JavaScript 내장 **Fetch API** 기반 비동기 데이터 통신 |
 
 ### 🛠 Backend
 <table align="center"><tr><td align="center" width="250" bgcolor="#f9f9f9"><b>기술 스택 (Tech Stack)</b></td><td align="center" width="450" bgcolor="#f9f9f9"><b>사용 목적 및 상세 내용</b></td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>Node.js 기반 가벼운 MVC 아키텍처 및 RESTful API 서버 설계</td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>비밀번호 단방향 암호화 해싱(Salt) 처리 및 JWT 기반 사용자 토큰 인증 보안</td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>파일/이미지 업로드 멀티파트 데이터 처리 및 크로스 도메인(CORS) 제한 해제</td></tr><tr><td><img src="https://shields.io"/></td><td>REST API 독립적 기능 테스트 및 엔드포인트 HTTP 요청 검증</td></tr></table>
