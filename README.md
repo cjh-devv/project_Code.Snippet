@@ -16,40 +16,16 @@ Code.Snippet은 개발 과정에서 작성한 트러블슈팅, 코드 메모, �
 ---
 
 ## 🗓 개발 기간
-<table align="center">
-  <tr>
-    <td align="center" width="220" bgcolor="#f9f9f9"><b>📅 개발 기간</b></td>
-    <td align="center" width="220" bgcolor="#f9f9f9"><b>🚦 프로젝트 상태</b></td>
-    <td align="center" width="220" bgcolor="#f9f9f9"><b>👤 참여 인원</b></td>
-  </tr>
-  <tr>
-    <td align="center">
-      2026.05.28 ~ 2026.06.08<br>
-      <sub>(개발 기간 종료)</sub>
-    </td>
-    <td align="center">
-      <img src="https://shields.io" alt="상태 뱃지"><br>
-      <sub>기본 기능 완료 / 보완 중</sub>
-    </td>
-    <td align="center">
-      <b>개인 프로젝트</b><br>
-      <sub>(1인 개발)</sub>
-    </td>
-  </tr>
-  <!-- 미완성 및 보완 예정 영역 -->
-  <tr>
-    <td colspan="3" bgcolor="#f9f9f9"><b>🛠️ 미완성 & 보완 예정 사항</b></td>
-  </tr>
-  <tr>
-    <td colspan="3">
-      • 🟩 핵심 메인 기능 및 데이터베이스 구축 완료<br>
-      • ⬛ 미흡한 UI/UX 디자인 디테일 수정 및 반응형 레이아웃 보완<br>
-      • ⬛ 예외 처리(에러 핸들링) 추가 및 코드 리팩토링<br>
-      • ⬛ 상용 서버 배포 및 성능 최적화
-    </td>
-  </tr>
-</table>
+| 📅 개발 기간 | 🚦 프로젝트 상태 | 👤 참여 인원 |
+|------------|----------------|------------|
+| 2026.05.28 ~ 2026.06.08<br><sub>(개발 기간 종료)</sub> | ![Status](https://img.shields.io/badge/FEATURES-COMPLETE-success?style=flat-square)<br><sub>기본 기능 완료 / 보완 중</sub> | **개인 프로젝트**<br><sub>(1인 개발)</sub> |
 
+### 🛠️ 미완성 & 보완 예정 사항
+
+- 🟩 핵심 메인 기능 및 데이터베이스 구축 완료
+- ⬛ 미흡한 UI/UX 디자인 디테일 수정 및 반응형 레이아웃 보완
+- ⬛ 예외 처리(에러 핸들링) 추가 및 코드 리팩토링
+- ⬛ 상용 서버 배포 및 성능 최적화
 
 ---
 
@@ -62,10 +38,21 @@ Code.Snippet은 개발 과정에서 작성한 트러블슈팅, 코드 메모, �
 | ![Material UI](https://img.shields.io/badge/Material_UI-007FFF?style=flat-square&logo=mui&logoColor=white) ![Fetch API](https://img.shields.io/badge/Fetch_API-000000?style=flat-square&logo=javascript&logoColor=F7DF1E) | Material-UI 머티리얼 디자인 적용 및 JavaScript 내장 **Fetch API** 기반 비동기 데이터 통신 |
 
 ### 🛠 Backend
-<table align="center"><tr><td align="center" width="250" bgcolor="#f9f9f9"><b>기술 스택 (Tech Stack)</b></td><td align="center" width="450" bgcolor="#f9f9f9"><b>사용 목적 및 상세 내용</b></td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>Node.js 기반 가벼운 MVC 아키텍처 및 RESTful API 서버 설계</td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>비밀번호 단방향 암호화 해싱(Salt) 처리 및 JWT 기반 사용자 토큰 인증 보안</td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>파일/이미지 업로드 멀티파트 데이터 처리 및 크로스 도메인(CORS) 제한 해제</td></tr><tr><td><img src="https://shields.io"/></td><td>REST API 독립적 기능 테스트 및 엔드포인트 HTTP 요청 검증</td></tr></table>
+| 기술 스택 (Tech Stack) | 사용 목적 및 상세 내용 |
+|-----------------------|------------------------|
+| ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white) | Node.js 기반 가벼운 MVC 아키텍처 및 RESTful API 서버 설계 |
+| ![bcrypt](https://img.shields.io/badge/bcrypt-3385FF?style=flat-square&logo=securityscorecard&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white) | 비밀번호 단방향 암호화 해싱(Salt) 처리 및 JWT 기반 사용자 토큰 인증 보안 |
+| ![Multer](https://img.shields.io/badge/Multer-FF6B6B?style=flat-square) ![CORS](https://img.shields.io/badge/CORS-00599C?style=flat-square) | 파일/이미지 업로드 멀티파트 데이터 처리 및 크로스 도메인(CORS) 제한 해제 |
+| ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=postman&logoColor=white) | REST API 독립적 기능 테스트 및 엔드포인트 HTTP 요청 검증 |
 
 ### 🗄 Database & Tools
-<table align="center"><tr><td align="center" width="250" bgcolor="#f9f9f9"><b>기술 스택 (Tech Stack)</b></td><td align="center" width="450" bgcolor="#f9f9f9"><b>사용 목적 및 상세 내용</b></td></tr><tr><td><img src="https://shields.io"/></td><td>대용량 데이터 트랜잭션 관리 및 관계형 데이터베이스(RDBMS) 설계</td></tr><tr><td><img src="https://shields.io"/></td><td>공공데이터 포털 오픈 API 연동 및 필요한 외부 데이터 포맷팅 파싱</td></tr><tr><td><img src="https://shields.io"/></td><td>전체 소스코드 편집 및 로컬 확장 프로그램을 활용한 개발 환경 구축</td></tr><tr><td><img src="https://shields.io"/> <img src="https://shields.io"/></td><td>Git 기반 소스코드 버전 관리 및 GitHub 원격 저장소를 활용한 백업</td></tr><tr><td><img src="https://shields.io"/></td><td>화면 와이어프레임 설계 및 UI/UX 프로토타이핑 구현</td></tr></table>
+| 기술 스택 (Tech Stack) | 사용 목적 및 상세 내용 |
+|-----------------------|------------------------|
+| ![Oracle](https://img.shields.io/badge/Oracle-F80000?style=flat-square&logo=oracle&logoColor=white) | 대용량 데이터 트랜잭션 관리 및 관계형 데이터베이스(RDBMS) 설계 |
+| ![Open API](https://img.shields.io/badge/Open_API-4CAF50?style=flat-square&logo=openapiinitiative&logoColor=white) | 공공데이터 포털 오픈 API 연동 및 필요한 외부 데이터 포맷팅 파싱 |
+| ![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white) | 전체 소스코드 편집 및 로컬 확장 프로그램을 활용한 개발 환경 구축 |
+| ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) | Git 기반 소스코드 버전 관리 및 GitHub 원격 저장소를 활용한 백업 |
+| ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white) | 화면 와이어프레임 설계 및 UI/UX 프로토타이핑 구현 |
 
 ---
 
