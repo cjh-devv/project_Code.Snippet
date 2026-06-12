@@ -10,8 +10,6 @@ import Search from './pages/Search';
 import EditPost from './pages/EditPost';
 import Mypage from './pages/Mypage';
 import ProfileEditPage from './pages/ProfileEditPage';
-import FollowersPage from './pages/FollowersPage';
-import FollowingsPage from './pages/FollowingsPage';
 import FollowListPage from './pages/FollowListPage';
 
 import { UserProvider } from './components/context/UserContext';
@@ -73,8 +71,6 @@ function App() {
             <Route path="/edit/:postId" element={<EditPost />} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/profile/edit" element={<ProfileEditPage />} />
-            <Route path="/followers" element={<FollowersPage />} />
-            <Route path="/followings" element={<FollowingsPage />} />
             <Route path="/follow/:type" element={<FollowListPage />} />
           </Routes>
         </Box>
