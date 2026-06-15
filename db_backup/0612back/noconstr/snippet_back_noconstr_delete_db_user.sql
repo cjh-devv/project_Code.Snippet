@@ -1,0 +1,705 @@
+--------------------------------------------------------
+--  파일이 생성됨 - 월요일-6월-15-2026   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Sequence SEQ_COMMENTS
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "SEQ_COMMENTS"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 20 NOCACHE  NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+--------------------------------------------------------
+--  DDL for Sequence SEQ_POSTS
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "SEQ_POSTS"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 14 NOCACHE  NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+--------------------------------------------------------
+--  DDL for Sequence SEQ_POST_LIKES
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "SEQ_POST_LIKES"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 77 NOCACHE  NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+--------------------------------------------------------
+--  DDL for Sequence SEQ_POST_TAGS
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "SEQ_POST_TAGS"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 35 NOCACHE  NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+--------------------------------------------------------
+--  DDL for Sequence SEQ_TAGS
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "SEQ_TAGS"  MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 27 NOCACHE  NOORDER  NOCYCLE  NOKEEP  NOSCALE  GLOBAL ;
+--------------------------------------------------------
+--  DDL for Table BOOKMARKS
+--------------------------------------------------------
+
+  CREATE TABLE "BOOKMARKS" 
+   (	"BOOKMARK_ID" NUMBER GENERATED ALWAYS AS IDENTITY MINVALUE 1 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE  NOKEEP  NOSCALE , 
+	"USER_ID" VARCHAR2(30 BYTE), 
+	"POST_ID" NUMBER, 
+	"CREATED_AT" DATE DEFAULT SYSDATE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Table COMMENTS
+--------------------------------------------------------
+
+  CREATE TABLE "COMMENTS" 
+   (	"COMMENT_ID" NUMBER, 
+	"POST_ID" NUMBER, 
+	"USER_ID" VARCHAR2(30 BYTE), 
+	"CONTENT" VARCHAR2(2000 BYTE), 
+	"CREATED_AT" DATE DEFAULT SYSDATE, 
+	"UPDATED_AT" DATE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Table FOLLOWS
+--------------------------------------------------------
+
+  CREATE TABLE "FOLLOWS" 
+   (	"FOLLOWER_ID" VARCHAR2(30 BYTE), 
+	"FOLLOWING_ID" VARCHAR2(30 BYTE), 
+	"CREATED_AT" DATE DEFAULT SYSDATE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Table POSTS
+--------------------------------------------------------
+
+  CREATE TABLE "POSTS" 
+   (	"POST_ID" NUMBER, 
+	"USER_ID" VARCHAR2(50 BYTE), 
+	"TITLE" VARCHAR2(200 BYTE), 
+	"CONTENT" VARCHAR2(4000 BYTE), 
+	"CODE_BLOCK" VARCHAR2(4000 BYTE), 
+	"CREATED_AT" DATE DEFAULT SYSDATE, 
+	"UPDATED_AT" DATE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Table POST_LIKES
+--------------------------------------------------------
+
+  CREATE TABLE "POST_LIKES" 
+   (	"LIKE_ID" NUMBER, 
+	"POST_ID" NUMBER, 
+	"USER_ID" VARCHAR2(30 BYTE), 
+	"CREATED_AT" DATE DEFAULT SYSDATE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Table POST_TAGS
+--------------------------------------------------------
+
+  CREATE TABLE "POST_TAGS" 
+   (	"POST_TAG_ID" NUMBER, 
+	"POST_ID" NUMBER, 
+	"TAG_ID" NUMBER
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Table TAGS
+--------------------------------------------------------
+
+  CREATE TABLE "TAGS" 
+   (	"TAG_ID" NUMBER, 
+	"TAG_NAME" VARCHAR2(50 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Table USERS
+--------------------------------------------------------
+
+  CREATE TABLE "USERS" 
+   (	"USER_ID" VARCHAR2(30 BYTE), 
+	"EMAIL" VARCHAR2(100 BYTE), 
+	"PASSWORD_HASH" VARCHAR2(255 BYTE), 
+	"NICKNAME" VARCHAR2(30 BYTE), 
+	"CREATED_AT" DATE DEFAULT SYSDATE, 
+	"PROFILE_IMAGE" VARCHAR2(500 BYTE), 
+	"BIO" VARCHAR2(300 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 
+ NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+REM INSERTING into BOOKMARKS
+SET DEFINE OFF;
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('user01',9,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('user01',8,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('user01',7,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('user01',6,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',8,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',7,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',4,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',11,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',10,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('user01',13,to_date('26/06/12','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',6,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',9,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('kong123',10,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('kong123',8,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('kong123',6,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('kong123',7,to_date('26/06/09','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('kong123',13,to_date('26/06/12','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('devkim',13,to_date('26/06/12','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('devkim',12,to_date('26/06/12','RR/MM/DD'));
+Insert into BOOKMARKS (USER_ID,POST_ID,CREATED_AT) values ('hong123',13,to_date('26/06/12','RR/MM/DD'));
+REM INSERTING into COMMENTS
+SET DEFINE OFF;
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (1,4,'hong123','수정된 댓글입니다',to_date('26/06/01','RR/MM/DD'),to_date('26/06/02','RR/MM/DD'));
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (5,4,'hong123','이게되네??!!',to_date('26/06/02','RR/MM/DD'),to_date('26/06/02','RR/MM/DD'));
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (3,4,'hong123','댓글 테스트3',to_date('26/06/01','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (4,4,'hong123','댓글 테스트4',to_date('26/06/02','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (7,4,'hong123','zz',to_date('26/06/02','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (8,4,'hong123','qq',to_date('26/06/02','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (10,11,'hong123','zz',to_date('26/06/09','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (9,6,'user01','굳굳!ㅋㅋ',to_date('26/06/09','RR/MM/DD'),to_date('26/06/09','RR/MM/DD'));
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (11,10,'kong123','어렵다',to_date('26/06/09','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (12,11,'kong123','prev가 머임??',to_date('26/06/09','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (13,13,'kong123','이런것도 모름?? 개발자 맞음??',to_date('26/06/12','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (14,13,'user01','잘 보았습니다^^ 물론 읽지는 않았습니다 ^^',to_date('26/06/12','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (15,13,'devkim','toLowerCase가 머에여??',to_date('26/06/12','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (18,13,'hong123','영문 대문자 소문자 둘다 검색되게 하는건가요?',to_date('26/06/12','RR/MM/DD'),null);
+Insert into COMMENTS (COMMENT_ID,POST_ID,USER_ID,CONTENT,CREATED_AT,UPDATED_AT) values (19,13,'hong123','ㅂㅂㅂ',to_date('26/06/12','RR/MM/DD'),null);
+REM INSERTING into FOLLOWS
+SET DEFINE OFF;
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('kong123','user01',to_date('26/06/09','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('kong123','hong123',to_date('26/06/09','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('hong123','user01',to_date('26/06/09','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('devkim','user01',to_date('26/06/12','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('hong123','devkim',to_date('26/06/12','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('devkim','kong123',to_date('26/06/12','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('devkim','hong123',to_date('26/06/12','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('kong123','devkim',to_date('26/06/12','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('user01','kong123',to_date('26/06/12','RR/MM/DD'));
+Insert into FOLLOWS (FOLLOWER_ID,FOLLOWING_ID,CREATED_AT) values ('hong123','kong123',to_date('26/06/12','RR/MM/DD'));
+REM INSERTING into POSTS
+SET DEFINE OFF;
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (7,'hong123','useEffect 3가지 형태','1. DependencyList(DependencyArray) 없는 경우
+           ->렌더링 될 때마다 호출     
+2. DependencyList(DependencyArray)가 빈 값일 경우
+   -> 최초 한번만 실행  
+3. DependencyList에 값이 있는 경우
+-> 리스트 안에 있는 값이 변경되서 렌더링 될 때 실행','1. DependencyList(DependencyArray) 없는 경우
+         ->렌더링 될 때마다 호출         
+ useEffect(()=>{
+   console.log("DependencyList(DependencyArray) 없는 useEffect")
+});
+
+2. DependencyList(DependencyArray)가 빈 값일 경우
+     -> 최초 로드되는 한번만 실행 렌더링 아니고 
+     useEffect(() => {
+     console.log("DependencyList(DependencyArray) 빈값인 useEffect")
+     }, []);
+
+3. DependencyList에 값이 있느 경우(2개이상 넣는게 가능 리스트니까)
+     -> 리스트 안에 있는 값이 변경되서 렌더링 될 때 실행
+    useEffect(() => {
+        console.log("DependencyList(DependencyArray)에 값이 있는 경우 useEffect")
+    }, [num1]);',to_date('26/06/04','RR/MM/DD'),to_date('26/06/09','RR/MM/DD'));
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (8,'hong123','날짜좀 이쁘게 써라!','created_at 컬럼으로 가져온 날짜 이쁘게 만들어주기 ^^','new Date(selectedFeed?.CREATED_AT).toLocaleString(''ko-KR'')',to_date('26/06/05','RR/MM/DD'),null);
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (4,'hong123','테스트4','내용4','console.log(''test4'')',to_date('26/06/01','RR/MM/DD'),to_date('26/06/04','RR/MM/DD'));
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (6,'hong123','React Context로 로그인 상태 관리하기','React Context API를 활용하여 전역 로그인 상태를 관리','const UserContext = createContext();
+
+export function UserProvider({ children }) {
+  const [user, setUser] = useState(null);
+
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
+}',to_date('26/06/02','RR/MM/DD'),to_date('26/06/09','RR/MM/DD'));
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (10,'user01','JWT 토큰 검증 미들웨어','JWT 토큰을 검증하여 인증된 사용자만 접근할 수 있도록 하는 미들웨어입니다.','const jwt = require("jsonwebtoken");
+
+module.exports = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "토큰 없음" });
+  }
+
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+  } catch {
+    return res.status(403).json({ message: "유효하지 않은 토큰" });
+  }
+};',to_date('26/06/09','RR/MM/DD'),null);
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (9,'hong123','사용자 정보 조회 API','Oracle Database에서 특정 사용자의 정보를 조회하는 코드','const result = await conn.execute(
+  `SELECT * FROM USERS WHERE USER_ID = :userId`,
+  { userId },
+  { outFormat: oracledb.OUT_FORMAT_OBJECT }
+);',to_date('26/06/09','RR/MM/DD'),null);
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (11,'user01','좋아요 상태 토글 구현','좋아요 버튼 클릭 시 상태를 반전시키는 간단한 토글 로직입니다.','const [liked, setLiked] = useState(false);
+
+const handleLike = () => {
+  setLiked(prev => !prev);
+};',to_date('26/06/09','RR/MM/DD'),null);
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (12,'kong123','게시글 북마크 저장','관심 있는 게시글을 북마크 목록에 추가하는 기능입니다.','const handleBookmark = async () => {
+  await fetch(`/bookmark/${postId}`, {
+    method: "POST"
+  });
+};',to_date('26/06/09','RR/MM/DD'),null);
+Insert into POSTS (POST_ID,USER_ID,TITLE,CONTENT,CODE_BLOCK,CREATED_AT,UPDATED_AT) values (13,'kong123','실시간 게시글 검색','검색 키워드 기능 만들때 쓰는거','const filteredPosts = posts.filter(post =>
+  post.title.toLowerCase().includes(keyword.toLowerCase())
+);',to_date('26/06/09','RR/MM/DD'),to_date('26/06/12','RR/MM/DD'));
+REM INSERTING into POST_LIKES
+SET DEFINE OFF;
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (44,6,'hong123',to_date('26/06/04','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (52,7,'hong123',to_date('26/06/05','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (58,8,'hong123',to_date('26/06/05','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (59,9,'user01',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (61,7,'user01',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (60,8,'user01',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (62,6,'user01',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (53,4,'hong123',to_date('26/06/05','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (63,11,'hong123',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (64,10,'hong123',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (75,13,'user01',to_date('26/06/12','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (65,9,'hong123',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (66,10,'kong123',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (67,8,'kong123',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (68,6,'kong123',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (69,7,'kong123',to_date('26/06/09','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (70,13,'kong123',to_date('26/06/12','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (71,13,'devkim',to_date('26/06/12','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (72,12,'devkim',to_date('26/06/12','RR/MM/DD'));
+Insert into POST_LIKES (LIKE_ID,POST_ID,USER_ID,CREATED_AT) values (76,13,'hong123',to_date('26/06/12','RR/MM/DD'));
+REM INSERTING into POST_TAGS
+SET DEFINE OFF;
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (27,6,22);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (28,6,23);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (31,7,1);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (30,7,2);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (29,7,3);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (4,8,4);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (5,8,5);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (6,8,6);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (7,9,7);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (8,9,8);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (9,9,9);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (10,10,10);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (11,10,11);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (12,10,12);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (13,10,13);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (14,11,14);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (15,11,15);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (16,11,16);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (19,12,13);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (17,12,17);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (18,12,18);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (32,13,24);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (33,13,25);
+Insert into POST_TAGS (POST_TAG_ID,POST_ID,TAG_ID) values (34,13,26);
+REM INSERTING into TAGS
+SET DEFINE OFF;
+Insert into TAGS (TAG_ID,TAG_NAME) values (21,'1');
+Insert into TAGS (TAG_ID,TAG_NAME) values (13,'Backend');
+Insert into TAGS (TAG_ID,TAG_NAME) values (17,'Bookmark');
+Insert into TAGS (TAG_ID,TAG_NAME) values (8,'Database');
+Insert into TAGS (TAG_ID,TAG_NAME) values (3,'DependencyArray');
+Insert into TAGS (TAG_ID,TAG_NAME) values (2,'DependencyList');
+Insert into TAGS (TAG_ID,TAG_NAME) values (11,'Express');
+Insert into TAGS (TAG_ID,TAG_NAME) values (12,'JWT');
+Insert into TAGS (TAG_ID,TAG_NAME) values (15,'Like');
+Insert into TAGS (TAG_ID,TAG_NAME) values (10,'NodeJS');
+Insert into TAGS (TAG_ID,TAG_NAME) values (7,'Oracle');
+Insert into TAGS (TAG_ID,TAG_NAME) values (14,'React');
+Insert into TAGS (TAG_ID,TAG_NAME) values (18,'SNS');
+Insert into TAGS (TAG_ID,TAG_NAME) values (9,'SQL');
+Insert into TAGS (TAG_ID,TAG_NAME) values (19,'Search');
+Insert into TAGS (TAG_ID,TAG_NAME) values (16,'UI');
+Insert into TAGS (TAG_ID,TAG_NAME) values (20,'UX');
+Insert into TAGS (TAG_ID,TAG_NAME) values (22,'UserContext');
+Insert into TAGS (TAG_ID,TAG_NAME) values (23,'UserProvider');
+Insert into TAGS (TAG_ID,TAG_NAME) values (4,'oracle');
+Insert into TAGS (TAG_ID,TAG_NAME) values (24,'react');
+Insert into TAGS (TAG_ID,TAG_NAME) values (25,'search');
+Insert into TAGS (TAG_ID,TAG_NAME) values (5,'toLocaleString');
+Insert into TAGS (TAG_ID,TAG_NAME) values (1,'useEffect');
+Insert into TAGS (TAG_ID,TAG_NAME) values (26,'ux');
+Insert into TAGS (TAG_ID,TAG_NAME) values (6,'날짜');
+REM INSERTING into USERS
+SET DEFINE OFF;
+Insert into USERS (USER_ID,EMAIL,PASSWORD_HASH,NICKNAME,CREATED_AT,PROFILE_IMAGE,BIO) values ('hong123','hong123@naver.com','$2b$10$U8b6BEEoXoLNeM8UuOleRe6ncrsRIAJC4aFz.WJi44gqlUgKhtwcK','KILLDONG',to_date('26/06/01','RR/MM/DD'),'http://localhost:3010/uploads/profiles/1780967087606-1780817896464-스크린샷 2026-05-01 121728.png','안녕하세요 반갑습니다!');
+Insert into USERS (USER_ID,EMAIL,PASSWORD_HASH,NICKNAME,CREATED_AT,PROFILE_IMAGE,BIO) values ('kong123','kong123@naver.com','$2b$10$S5XY8NFnlnROHKin6/vtcOi/gz6cYi6xNrFdIXIfvTfR7l1q6w07m','KILLKONG',to_date('26/06/02','RR/MM/DD'),'http://192.168.30.58:3010/uploads/profiles/1781246187291-frontendlee.png','코딩 재미없어');
+Insert into USERS (USER_ID,EMAIL,PASSWORD_HASH,NICKNAME,CREATED_AT,PROFILE_IMAGE,BIO) values ('user01','ironwater@naver.com','$2b$10$LtuEZz0GM.A8okKPYm0hK.HJzaN6xXJ1ro2oYnvKOvBR2wNc9eWxu','김절수',to_date('26/06/02','RR/MM/DD'),'http://localhost:3010/uploads/profiles/1780970682167-1780812804043-스크린샷 2026-05-01 125158.png','트러블슈팅 경험을 기록합니다');
+Insert into USERS (USER_ID,EMAIL,PASSWORD_HASH,NICKNAME,CREATED_AT,PROFILE_IMAGE,BIO) values ('devkim','devkim@example.com','$2b$10$zgrG07JUvJJfiuTUaT7kUubU83N35apKeR1sX6.9erUn/ZbmBLzZa','김개발',to_date('26/06/12','RR/MM/DD'),'http://192.168.30.58:3010/uploads/profiles/1781243318298-devkim.png','React와 Node.js를 공부하는 풀스택 개발자입니다.
+');
+--------------------------------------------------------
+--  DDL for Index IDX_COMMENTS_POST
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_COMMENTS_POST" ON "COMMENTS" ("POST_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index IDX_COMMENTS_USER
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_COMMENTS_USER" ON "COMMENTS" ("USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index IDX_POSTS_CREATED_AT
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_POSTS_CREATED_AT" ON "POSTS" ("CREATED_AT") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index IDX_POSTS_USER
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_POSTS_USER" ON "POSTS" ("USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index PK_BOOKMARKS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "PK_BOOKMARKS" ON "BOOKMARKS" ("BOOKMARK_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index PK_FOLLOWS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "PK_FOLLOWS" ON "FOLLOWS" ("FOLLOWER_ID", "FOLLOWING_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008224
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008224" ON "USERS" ("USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008231
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008231" ON "POSTS" ("POST_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008234
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008234" ON "TAGS" ("TAG_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008238
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008238" ON "POST_TAGS" ("POST_TAG_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008246
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008246" ON "COMMENTS" ("COMMENT_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008251
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008251" ON "POST_LIKES" ("LIKE_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_BOOKMARK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_BOOKMARK" ON "BOOKMARKS" ("USER_ID", "POST_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_POST_TAGS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_POST_TAGS" ON "POST_TAGS" ("POST_ID", "TAG_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_TAGS_NAME
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_TAGS_NAME" ON "TAGS" ("TAG_NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_USERS_EMAIL
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_USERS_EMAIL" ON "USERS" ("EMAIL") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UQ_POST_USER_LIKE
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UQ_POST_USER_LIKE" ON "POST_LIKES" ("POST_ID", "USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index PK_BOOKMARKS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "PK_BOOKMARKS" ON "BOOKMARKS" ("BOOKMARK_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_BOOKMARK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_BOOKMARK" ON "BOOKMARKS" ("USER_ID", "POST_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008246
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008246" ON "COMMENTS" ("COMMENT_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index IDX_COMMENTS_POST
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_COMMENTS_POST" ON "COMMENTS" ("POST_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index IDX_COMMENTS_USER
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_COMMENTS_USER" ON "COMMENTS" ("USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index PK_FOLLOWS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "PK_FOLLOWS" ON "FOLLOWS" ("FOLLOWER_ID", "FOLLOWING_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index IDX_POSTS_USER
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_POSTS_USER" ON "POSTS" ("USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index IDX_POSTS_CREATED_AT
+--------------------------------------------------------
+
+  CREATE INDEX "IDX_POSTS_CREATED_AT" ON "POSTS" ("CREATED_AT") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008231
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008231" ON "POSTS" ("POST_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008251
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008251" ON "POST_LIKES" ("LIKE_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UQ_POST_USER_LIKE
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UQ_POST_USER_LIKE" ON "POST_LIKES" ("POST_ID", "USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008238
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008238" ON "POST_TAGS" ("POST_TAG_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_POST_TAGS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_POST_TAGS" ON "POST_TAGS" ("POST_ID", "TAG_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008234
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008234" ON "TAGS" ("TAG_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_TAGS_NAME
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_TAGS_NAME" ON "TAGS" ("TAG_NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index SYS_C008224
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "SYS_C008224" ON "USERS" ("USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
+--------------------------------------------------------
+--  DDL for Index UK_USERS_EMAIL
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "UK_USERS_EMAIL" ON "USERS" ("EMAIL") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1
+  BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "USERS" ;
