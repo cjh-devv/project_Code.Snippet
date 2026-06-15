@@ -113,3 +113,7 @@ Code.Snippet은 개발자가 작성한 코드, 트러블슈팅 경험, 학습 �
 ## 📂 프로젝트 자료 모음
 ▶ [작업 로그](https://docs.google.com/document/d/1Px0daDbBzbfVNXaAyl0Qw5DE-xY_W8dCP4ZKTf7rcsU/edit?usp=sharing)
 ---
+▶ [테이블 설계 및 변경내역](https://docs.google.com/spreadsheets/d/1EpQMGrH7iF6DilJhEz1KWTr2glK1PnkOaKNCY2rWic4/edit?usp=sharing)
+---
+▶ [오류 노트](https://docs.google.com/spreadsheets/d/10L6R3Qvdq-DuoqFx2fpj7pBrJ-SwYoeMhG87t23zkDU/edit?usp=sharing)
+---
