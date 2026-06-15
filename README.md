@@ -115,5 +115,9 @@ Code.Snippet은 개발자가 작성한 코드, 트러블슈팅 경험, 학습 �
 ---
 ▶ [테이블 설계 및 변경내역](https://docs.google.com/spreadsheets/d/1EpQMGrH7iF6DilJhEz1KWTr2glK1PnkOaKNCY2rWic4/edit?usp=sharing)
 ---
+▶ [ERD](https://drive.google.com/file/d/1hZNISXeGiMejDDadjC6iT5L7Yj3RgSkm/view?usp=sharing)
+--
+▶ [화면설계](https://docs.google.com/document/d/1Js9LhD6Fnw_6wMBj5jzCLVlZvEThQ5UV5VN6rjayNnU/edit?usp=sharing)
+---
 ▶ [오류 노트](https://docs.google.com/spreadsheets/d/10L6R3Qvdq-DuoqFx2fpj7pBrJ-SwYoeMhG87t23zkDU/edit?usp=sharing)
 ---
