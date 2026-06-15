@@ -111,3 +111,4 @@ Code.Snippet은 개발자가 작성한 코드, 트러블슈팅 경험, 학습 �
 ---
 
 ## 📂 프로젝트 자료 모음
+▶ [작업 로그](https://docs.google.com/document/d/1Px0daDbBzbfVNXaAyl0Qw5DE-xY_W8dCP4ZKTf7rcsU/edit?usp=sharing)
