@@ -11,7 +11,6 @@ import {
   CardContent,
   InputAdornment
 } from '@mui/material';
-// 개발자 감성을 더해줄 아이콘 추가
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
 import CodeIcon from '@mui/icons-material/Code';
@@ -32,7 +31,7 @@ function Login() {
 
     const info = { userId, pwd };
 
-    fetch("http://localhost:3010/user/login", {
+    fetch("/api/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(info)

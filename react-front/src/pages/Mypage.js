@@ -41,7 +41,7 @@ function MyPage() {
     const [targetPostId, setTargetPostId] = useState(null);    // 삭제 대상 포스트 ID 저장
 
     function handleGetMyInfo() {
-        fetch("http://localhost:3010/user", {
+        fetch("/api/user", {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -83,7 +83,7 @@ function MyPage() {
     }, []);
 
     function handleGetMyPost() {
-        fetch("http://localhost:3010/post/mypost", {
+        fetch("/api/post/mypost", {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -125,7 +125,7 @@ function MyPage() {
 
     // 북마크 목록 API 호출 함수
     function handleGetMyBookmarks() {
-        fetch("http://localhost:3010/post/my-bookmarks", {
+        fetch("/api/post/my-bookmarks", {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -153,7 +153,7 @@ function MyPage() {
     function handleDeleteBookmark() {
         if (!targetPostId) return;
 
-        fetch(`http://localhost:3010/post/${targetPostId}/bookmark/toggle`, {
+        fetch(`/api/post/${targetPostId}/bookmark/toggle`, {
             method: 'POST',
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -242,7 +242,7 @@ function MyPage() {
                                     }}
                                     onClick={() => {
                                         setOpen(true);
-                                        fetch(`http://localhost:3010/post/${post.POST_ID}/detail`, {
+                                        fetch(`/api/post/${post.POST_ID}/detail`, {
                                             headers: {
                                                 "Authorization": "Bearer " + localStorage.getItem("token")
                                             }
@@ -358,7 +358,7 @@ function MyPage() {
                                         }}
                                         onClick={() => {
                                             setOpen(true);
-                                            fetch(`http://localhost:3010/post/${bookmark.POST_ID}/detail`, {
+                                            fetch(`/api/post/${bookmark.POST_ID}/detail`, {
                                                 headers: {
                                                     "Authorization": "Bearer " + localStorage.getItem("token")
                                                 }

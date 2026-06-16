@@ -82,7 +82,7 @@ function Search() {
         setLoading(true);
         setSearched(true);
 
-        fetch(`http://localhost:3010/post/search?keyword=${encodeURIComponent(searchKeyword)}`)
+        fetch(`/api/post/search?keyword=${encodeURIComponent(searchKeyword)}`)
             .then(res => res.json())
             .then(data => {
                 if (data.result === "success") {

@@ -12,7 +12,7 @@ export function UserProvider({ children }) {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        fetch("http://localhost:3010/user", {
+        fetch("/api/user", {
             headers: { "Authorization": "Bearer " + token }
         })
         .then(res => res.json())

@@ -26,7 +26,7 @@ function EditPost() {
     const tagRef = useRef();
     useEffect(() => {
 
-        fetch(`http://localhost:3010/post/${postId}/detail`, {
+        fetch(`/api/post/${postId}/detail`, {
             method: "GET",
             headers: {
                 "Authorization":
@@ -60,7 +60,7 @@ function EditPost() {
             ?.filter(tag => tag);
 
         fetch(
-            `http://localhost:3010/post/${postId}`,
+            `/api/post/${postId}`,
             {
                 method: "PUT",
                 headers: {

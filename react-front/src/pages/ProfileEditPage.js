@@ -50,7 +50,7 @@ function ProfileEditPage() {
 
     // 1. 페이지가 최초 열릴 때, 기존 유저 데이터를 백엔드에서 조회해와서 input에 채워넣음
     function handleGetMyInfo() {
-        fetch("http://localhost:3010/user", {
+        fetch("/api/user", {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
             }
@@ -130,7 +130,7 @@ function ProfileEditPage() {
         const timer = setTimeout(async () => {
             try {
                 const token = localStorage.getItem('token');
-                fetch(`http://localhost:3010/profile/check-nickname?nickname=${nickname}`, {
+                fetch(`/api/profile/check-nickname?nickname=${nickname}`, {
                     method: "GET",
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
@@ -197,7 +197,7 @@ function ProfileEditPage() {
         //     console.log(`${key}:`, value);
         // }
 
-        fetch('http://localhost:3010/profile/update', {
+        fetch('/api/profile/update', {
             method: "POST",
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
@@ -225,7 +225,7 @@ function ProfileEditPage() {
             return;
         }
         const token = localStorage.getItem('token');
-        fetch('http://localhost:3010/user/password-update', {
+        fetch('/api/user/password-update', {
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${token}`,

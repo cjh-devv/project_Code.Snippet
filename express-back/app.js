@@ -12,21 +12,22 @@ if (!fs.existsSync(profileUploadDir)){
 // router
 
 const db = require("./db");
+require("dotenv").config();
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: 'http://3.34.121.16' }));
 app.use(express.json())
 
 // ejs 설정
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '.')); // .은 경로
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use("/user", require("./routes/user"));
-app.use("/post", require("./routes/post"));
-app.use("/comment", require("./routes/comment"));
-app.use("/profile", require("./routes/profile"));
-app.use("/follow", require("./routes/follow"));
+app.use("/api/user", require("./routes/user"));
+app.use("/api/post", require("./routes/post"));
+app.use("/api/comment", require("./routes/comment"));
+app.use("/api/profile", require("./routes/profile"));
+app.use("/api/follow", require("./routes/follow"));
 
 async function startServer() {
   try {

@@ -32,7 +32,7 @@ export default function ProfileModal({
 
         setLoading(true);
 
-        fetch(`/user/${userId}/profile`, {
+        fetch(`/api/user/${userId}/profile`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -55,7 +55,7 @@ export default function ProfileModal({
         const token = localStorage.getItem("token");
 
         fetch(
-            `/follow/${userId}/toggle`,
+            `/api/follow/${userId}/toggle`,
             {
                 method: "POST",
                 headers: {

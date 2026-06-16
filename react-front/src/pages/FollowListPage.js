@@ -43,8 +43,8 @@ export default function FollowListPage() {
         const token = localStorage.getItem("token");
         const url =
             type === "followers"
-                ? "http://localhost:3010/follow/followers"
-                : "http://localhost:3010/follow/followings";
+                ? "/api/follow/followers"
+                : "/api/follow/followings";
 
         fetch(url, {
             headers: {

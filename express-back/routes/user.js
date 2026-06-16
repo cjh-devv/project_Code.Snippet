@@ -268,7 +268,7 @@ router.post('/login', async (req, res) => {
 
                 token = jwt.sign(
                     payload,
-                    process.env.JWT_KEY,
+                    process.env.jwt_key,
                     {
                         expiresIn: '4h'
                     }

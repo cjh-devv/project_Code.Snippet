@@ -28,7 +28,7 @@ export default function UserProfileModal({
     const fetchProfile = async () => {
         try {
             const res = await fetch(
-                `http://localhost:3010/user/${userId}/profile`,
+                `/api/user/${userId}/profile`,
                 {
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("token")
@@ -50,7 +50,7 @@ export default function UserProfileModal({
     const handleFollow = () => {
         setLoading(true);
         fetch(
-            `http://localhost:3010/follow/${userId}/follow`,
+            `/api/follow/${userId}/follow`,
             {
                 method: "POST",
                 headers: {
@@ -77,7 +77,7 @@ export default function UserProfileModal({
     const handleUnfollow = () => {
         setLoading(true);
         fetch(
-            `http://localhost:3010/follow/${userId}/follow`,
+            `/api/follow/${userId}/follow`,
             {
                 method: "DELETE",
                 headers: {

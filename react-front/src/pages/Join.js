@@ -132,7 +132,7 @@ function Join() {
         formData.append("email", form.mail);
         if (profileFile) formData.append("profileImg", profileFile);
 
-        fetch("http://localhost:3010/user/join", {
+        fetch("/api/user/join", {
             method: "POST",
             body: formData
         })

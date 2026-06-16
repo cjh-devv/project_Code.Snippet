@@ -160,7 +160,6 @@ router.post('/update', (req, res, next) => {
             if (dest.startsWith('/')) dest = dest.substring(1);
             if (!dest.endsWith('/')) dest += '/';
 
-            // 깨끗한 URL 구조 생성 (예: http://localhost:3010/uploads/profiles/파일명.jpg)
             let newImageUrl = `${host}/${dest}${req.file.filename}`;
 
             await connection.execute(

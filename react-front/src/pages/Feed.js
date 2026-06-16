@@ -18,7 +18,7 @@ function Feed() {
       return;
     }
 
-    fetch("http://localhost:3010/post/feed?page=1&size=10", {
+    fetch("/api/post/feed?page=1&size=10", {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem("token")
       }

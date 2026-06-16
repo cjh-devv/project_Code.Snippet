@@ -49,7 +49,7 @@ function Register() {
             return;
         }
 
-        fetch("http://localhost:3010/post", {
+        fetch("/api/post", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

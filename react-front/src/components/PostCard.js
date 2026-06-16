@@ -56,7 +56,7 @@ export default function PostCard({ feed, refreshFeed }) {
 
     const loadComments = () => {
 
-        fetch(`http://localhost:3010/comment/post/${feed.POST_ID}`)
+        fetch(`/api/comment/post/${feed.POST_ID}`)
             .then(res => res.json())
             .then(data => {
                 setComments(data.data);
@@ -91,7 +91,7 @@ export default function PostCard({ feed, refreshFeed }) {
 
         if (!newComment.trim()) return;
 
-        fetch("http://localhost:3010/comment", {
+        fetch("/api/comment", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -120,7 +120,7 @@ export default function PostCard({ feed, refreshFeed }) {
 
         if (!window.confirm("정말 이 게시글을 삭제하시겠습니까?")) return;
 
-        fetch("http://localhost:3010/post/" + feed.POST_ID, {
+        fetch("/api/post/" + feed.POST_ID, {
             method: "DELETE",
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -141,7 +141,7 @@ export default function PostCard({ feed, refreshFeed }) {
     const handleLike = () => {
 
         fetch(
-            `http://localhost:3010/post/${feed.POST_ID}/like/toggle`,
+            `/api/post/${feed.POST_ID}/like/toggle`,
             {
                 method: "POST",
                 headers: {
@@ -169,7 +169,7 @@ export default function PostCard({ feed, refreshFeed }) {
 
     //북마크 토글
     const handleBookmark = () => {
-        fetch(`http://localhost:3010/post/${selectedFeed?.POST_ID}/bookmark/toggle`, {
+        fetch(`/api/post/${selectedFeed?.POST_ID}/bookmark/toggle`, {
             method: "POST",
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token")
@@ -196,7 +196,7 @@ export default function PostCard({ feed, refreshFeed }) {
     const handleDeleteComment = (commentId) => {
         if (window.confirm("정말 삭제하시겠습니까?")) {
             fetch(
-                `http://localhost:3010/comment/${commentId}`,
+                `/api/comment/${commentId}`,
                 {
                     method: "DELETE",
                     headers: {
@@ -221,7 +221,7 @@ export default function PostCard({ feed, refreshFeed }) {
     const handleEditCommentSave = (commentId) => {
 
         fetch(
-            `http://localhost:3010/comment/${commentId}`,
+            `/api/comment/${commentId}`,
             {
                 method: "PUT",
                 headers: {
@@ -298,7 +298,7 @@ export default function PostCard({ feed, refreshFeed }) {
     // }
 // };
     const handleFollowToggle = () => {
-        fetch(`http://localhost:3010/follow/${selectedFeed.USER_ID}/follow`, {
+        fetch(`/api/follow/${selectedFeed.USER_ID}/follow`, {
             method: selectedFeed?.IS_FOLLOWING ? "DELETE" : "POST",
             headers: {
                 Authorization: "Bearer " + localStorage.getItem("token")
