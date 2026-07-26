@@ -53,7 +53,6 @@ Code.Snippet은 개발자가 작성한 코드, 트러블슈팅 경험, 학습 �
 | ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white) ![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white) | Node.js 기반 가벼운 MVC 아키텍처 및 RESTful API 서버 설계 |
 | ![bcrypt](https://img.shields.io/badge/bcrypt-3385FF?style=flat-square&logo=securityscorecard&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white) | 비밀번호 단방향 암호화 해싱(Salt) 처리 및 JWT 기반 사용자 토큰 인증 보안 |
 | ![Multer](https://img.shields.io/badge/Multer-FF6B6B?style=flat-square) ![CORS](https://img.shields.io/badge/CORS-00599C?style=flat-square) | 파일/이미지 업로드 멀티파트 데이터 처리 및 크로스 도메인(CORS) 제한 해제 |
-| ![Thunder Client](https://img.shields.io/badge/Thunder_Client-7C3AED?style=flat-square&logo=thunderclient&logoColor=white) | REST API 엔드포인트의 HTTP 요청·응답 테스트 및 기능 검증 |
 
 ### 🗄 Database & Tools
 | 기술 스택 (Tech Stack) | 사용 목적 및 상세 내용 |
@@ -62,6 +61,7 @@ Code.Snippet은 개발자가 작성한 코드, 트러블슈팅 경험, 학습 �
 | ![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=flat-square&logo=visualstudiocode&logoColor=white) | 전체 소스코드 편집 및 로컬 확장 프로그램을 활용한 개발 환경 구축 |
 | ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) | Git 기반 소스코드 버전 관리 및 GitHub 원격 저장소를 활용한 백업 |
 | ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white) | 화면 와이어프레임 설계 및 UI/UX 프로토타이핑 구현 |
+| ![Thunder Client](https://img.shields.io/badge/Thunder_Client-7C3AED?style=flat-square&logo=thunderclient&logoColor=white) | REST API 엔드포인트의 HTTP 요청·응답 테스트 및 기능 검증 |
 
 ---
 
