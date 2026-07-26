@@ -3,9 +3,7 @@
        alt="Code.Snippet 프로젝트 배너"
        width="100%">
 </p>
-
 <br>
-
 ## 📚 목차
 1. [프로젝트 소개](#-프로젝트-소개)
 2. [개발 기간](#-개발-기간)
@@ -111,18 +109,20 @@ Code.Snippet은 개발자가 작성한 코드, 트러블슈팅 경험, 학습 �
 ---
 
 ## 📝 발표 PPT
-▶ [발표 PPT](https://docs.google.com/presentation/d/1mPHFfHjMCL-igDDXm8NOh7iKPWvJw_Tu/edit?usp=sharing&ouid=109234818455404358768&rtpof=true&sd=true)
+- [발표 PPT](https://docs.google.com/presentation/d/1mPHFfHjMCL-igDDXm8NOh7iKPWvJw_Tu/edit?usp=sharing&ouid=109234818455404358768&rtpof=true&sd=true)
+
 ---
 
 ## 🎥 시연 영상
-▶ [시연 영상](https://drive.google.com/file/d/1KNLqPWu7j6MjYGaXeCX7wBc0tcz6RXfv/view?usp=sharing)
+- [시연 영상](https://drive.google.com/file/d/1KNLqPWu7j6MjYGaXeCX7wBc0tcz6RXfv/view?usp=sharing)
+
 ---
 
 ## 📂 프로젝트 자료 모음
-- ▶ [작업 로그](https://docs.google.com/document/d/1Px0daDbBzbfVNXaAyl0Qw5DE-xY_W8dCP4ZKTf7rcsU/edit?usp=sharing)
-- ▶ [테이블 설계 및 변경내역](https://docs.google.com/spreadsheets/d/1EpQMGrH7iF6DilJhEz1KWTr2glK1PnkOaKNCY2rWic4/edit?usp=sharing)
-- ▶ [ERD](https://drive.google.com/file/d/1hZNISXeGiMejDDadjC6iT5L7Yj3RgSkm/view?usp=sharing)
-- ▶ [화면설계](https://docs.google.com/document/d/1Js9LhD6Fnw_6wMBj5jzCLVlZvEThQ5UV5VN6rjayNnU/edit?usp=sharing)
-- ▶ [오류 노트](https://docs.google.com/spreadsheets/d/10L6R3Qvdq-DuoqFx2fpj7pBrJ-SwYoeMhG87t23zkDU/edit?usp=sharing)
+- [작업 로그](https://docs.google.com/document/d/1Px0daDbBzbfVNXaAyl0Qw5DE-xY_W8dCP4ZKTf7rcsU/edit?usp=sharing)
+- [테이블 설계 및 변경내역](https://docs.google.com/spreadsheets/d/1EpQMGrH7iF6DilJhEz1KWTr2glK1PnkOaKNCY2rWic4/edit?usp=sharing)
+- [ERD](https://drive.google.com/file/d/1hZNISXeGiMejDDadjC6iT5L7Yj3RgSkm/view?usp=sharing)
+- [화면설계](https://docs.google.com/document/d/1Js9LhD6Fnw_6wMBj5jzCLVlZvEThQ5UV5VN6rjayNnU/edit?usp=sharing)
+- [오류 노트](https://docs.google.com/spreadsheets/d/10L6R3Qvdq-DuoqFx2fpj7pBrJ-SwYoeMhG87t23zkDU/edit?usp=sharing)
 
 ---
